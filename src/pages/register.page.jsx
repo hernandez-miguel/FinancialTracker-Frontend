@@ -7,9 +7,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { NavLink } from "react-router-dom";
-import '../styles/login.style.css';
 
-function LoginPage() {
+function RegisterPage() {
 
   return (
     <Paper 
@@ -27,8 +26,24 @@ function LoginPage() {
             <LockOutlinedIcon></LockOutlinedIcon>
           </Avatar>
           <Typography variant='h6' component={'h1'}>
-            Sign in
+            Sign up
           </Typography>
+        </Stack>
+        <Stack spacing={3} direction={'row'}>
+          <TextField
+            label="First Name"
+            type='text'
+            fullWidth
+            required
+          >
+          </TextField>
+          <TextField
+            label="Last Name"
+            type='text'
+            fullWidth
+            required
+          >
+          </TextField>
         </Stack>
         <TextField
           label="Email Address"
@@ -45,19 +60,14 @@ function LoginPage() {
         > 
         </TextField>
         <Button variant='contained' fullWidth>Sign in</Button>
-        <Stack spacing={3} direction={'row'}>
-          <Typography variant='caption'>
-            <Link href="">Forgot password?</Link>
-          </Typography>
-          <Typography variant='caption'>
-            <NavLink to='/register'>
-              <Link>Don't have an account? Sign up</Link>
-            </NavLink>
-          </Typography>
-        </Stack>
+        <Typography variant='caption'>
+          <NavLink to='/login'>
+            <Link>Already have an account? Sign in</Link>
+          </NavLink>
+        </Typography>
       </Stack>
     </Paper>
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
