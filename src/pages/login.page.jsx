@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import { NavLink } from "react-router-dom";
 import '../styles/login.style.css';
 
@@ -18,7 +17,6 @@ function LoginPage() {
         p: 2.5,
         width: '350px',
         margin: '64px auto',
-        border: '1px solid red'
       }} 
     >
       <Stack spacing={3} direction={'column'} alignItems={'center'}>
@@ -46,14 +44,16 @@ function LoginPage() {
         </TextField>
         <Button variant='contained' fullWidth>Sign in</Button>
         <Stack spacing={3} direction={'row'}>
-          <Typography variant='caption'>
-            <Link href="">Forgot password?</Link>
-          </Typography>
-          <Typography variant='caption'>
-            <NavLink to='/register'>
-              <Link>Don't have an account? Sign up</Link>
-            </NavLink>
-          </Typography>
+          <NavLink to='' style={{color: '#1976d2'}}>
+            <Typography variant='caption'>
+              Forgot password?
+            </Typography>
+          </NavLink>
+          <NavLink to='/register' style={{color: '#1976d2'}}>
+            <Typography variant='caption'>
+              Don't have an account? Sign up
+            </Typography>
+          </NavLink>
         </Stack>
       </Stack>
     </Paper>

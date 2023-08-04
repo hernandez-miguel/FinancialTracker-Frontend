@@ -1,0 +1,9 @@
+#firstName:-webkit-autofill, 
+#firstName:-webkit-autofill:focus,
+#lastName:-webkit-autofill, 
+#lastName:-webkit-autofill:focus,
+#email:-webkit-autofill, 
+#email:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px white inset;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.87);
+}
