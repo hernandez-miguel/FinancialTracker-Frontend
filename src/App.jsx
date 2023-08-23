@@ -1,6 +1,9 @@
-import { LoginPage, RegisterPage } from './pages/index.js';
 import Container from '@mui/material/Container';
+import { LoginPage, RegisterPage } from './pages/index.js';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthProvider.jsx';
+import RequireAuth from './components/RequireAuth.jsx';
+import Layout from './components/Layout.jsx';
 
 import './styles/app.style.css';
 import DummyPage from './pages/dummyHome.page.jsx';
@@ -9,11 +12,20 @@ function App() {
   return (
     <Container>
       <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<DummyPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/register' element={<RegisterPage />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path='/' element={<Layout />}>
+              {/*public routes*/}
+              <Route path='/login' element={<LoginPage />} />
+              <Route path='/register' element={<RegisterPage />} />
+
+              {/*protected routes*/}
+              <Route element={<RequireAuth />}>
+                <Route path='/' element={<DummyPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </Container>
   );
