@@ -20,9 +20,13 @@ function App() {
               <Route path='/register' element={<RegisterPage />} />
 
               {/*protected routes*/}
-              <Route element={<RequireAuth />}>
+              <Route element={<RequireAuth allowedRoles={[2001]}/>}>
                 <Route path='/' element={<DummyPage />} />
               </Route>
+              
+              {/*<Route element={<RequireAuth allowedRoles={[5150]}/>}>
+                <Route path='/admin' element={<AdminPage />} />
+              </Route>/*/}
             </Route>
           </Routes>
         </AuthProvider>
