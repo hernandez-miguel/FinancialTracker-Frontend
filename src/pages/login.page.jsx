@@ -1,62 +1,141 @@
-import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { NavLink } from "react-router-dom";
+import Alert from '@mui/material/Alert';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/login.style.css';
+import { useState } from 'react';
+import useAuth from '../hooks/useAuth.hook';
+import axios from '../api/axios';
+
+const LOGIN_URL = '/auth';
 
 function LoginPage() {
+  const { setAuth } = useAuth();
+  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [showErrMsg, setShowErrMsg] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    setEmail('');
+    setPassword('');
+
+    try {
+      const response = await axios.post(
+        LOGIN_URL, 
+        JSON.stringify({ email, password }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      
+      const accessToken = response?.data?.accessToken;
+      const roles = response?.data?.roles;
+
+      setAuth({ email, password, roles, accessToken });
+      navigate(from, { replace:true });
+
+      console.log(response);
+    } catch (err) {
+        if (!err?.response) {
+            setShowErrMsg(true);
+            setErrMsg('No server response');
+        } else if (err.response?.status === 401) {
+            setShowErrMsg(true);
+            setErrMsg('Unauthorized');
+        } else {
+            setShowErrMsg(true);
+            setErrMsg('Registration failed');
+        }
+    }
+  }
   return (
-    <Paper 
-      elevation={0}
+    <Box
       sx={{
-        p: 2.5,
-        width: '350px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         margin: '64px auto',
-      }} 
+        maxWidth: '445px',
+      }}
     >
-      <Stack spacing={3} direction={'column'} alignItems={'center'}>
-        <Stack spacing={0} direction={'column'} alignItems={'center'}>
-          <Avatar sx={{ bgcolor: 'purple' }}>
-            <LockOutlinedIcon></LockOutlinedIcon>
-          </Avatar>
-          <Typography variant='h6' component={'h1'}>
-            Sign in
-          </Typography>
-        </Stack>
-        <TextField
-          label="Email Address"
-          type='email'
-          fullWidth
-          required
-        >
-        </TextField>
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          required
-        > 
-        </TextField>
-        <Button variant='contained' fullWidth>Sign in</Button>
-        <Stack spacing={3} direction={'row'}>
-          <NavLink to='' style={{color: '#1976d2'}}>
-            <Typography variant='caption'>
-              Forgot password?
-            </Typography>
-          </NavLink>
-          <NavLink to='/register' style={{color: '#1976d2'}}>
-            <Typography variant='caption'>
-              Don't have an account? Sign up
-            </Typography>
-          </NavLink>
-        </Stack>
-      </Stack>
-    </Paper>
+      <Avatar sx={{ bgcolor: '#9c27b0', m: 1 }}>
+        <LockOutlinedIcon></LockOutlinedIcon>
+      </Avatar>
+      <Typography variant="h5" component={'h1'}>
+        Sign In
+      </Typography>
+      <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
+        <Grid container spacing={2}>
+          { showErrMsg && 
+            <Grid item xs={12}>
+              <Alert severity='error'>{errMsg}</Alert>
+            </Grid>
+          }
+          <Grid item xs={12}>
+            <TextField
+              label="Email Address"
+              type="email"
+              name="email"
+              id="email"
+              fullWidth
+              required
+              value={email}
+              onChange={(ev) => setEmail(ev.target.value)}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Password"
+              type="password"
+              name="password"
+              id="password"
+              fullWidth
+              required
+              value={password}
+              onChange={(ev) => setPassword(ev.target.value)}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12}>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              fullWidth
+            >
+              Sign In
+            </Button>
+          </Grid>
+          <Grid item xs={5} sx={{ textAlign: 'left' }}>
+            <NavLink to='' style={{ color: '#1976d2' }}>
+              <Typography variant='caption'>
+                Forgot password?
+              </Typography>
+            </NavLink>
+          </Grid>
+          <Grid item xs={7} sx={{ textAlign: 'right' }}>
+            <NavLink to='/register' style={{ color: '#1976d2' }}>
+              <Typography variant='caption'>
+                Don't have an account? Sign up
+              </Typography>
+            </NavLink>
+          </Grid>
+        </Grid>
+      </form>
+    </Box>
   );
 }
 

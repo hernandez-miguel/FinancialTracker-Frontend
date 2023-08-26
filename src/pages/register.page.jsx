@@ -114,7 +114,7 @@ function RegisterPage() {
       <Typography variant="h5" component={'h1'}>
         Sign up
       </Typography>
-      <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
+      <form onSubmit={handleSubmit} style={{ marginTop: '24px'}}>
         <Grid container spacing={2}>
           { showErrMsg && 
             <Grid item xs={12}>
@@ -197,8 +197,8 @@ function RegisterPage() {
             </Button>
           </Grid>
         </Grid>
-        <Grid item xs={3} sx={{ textAlign: 'right', py: 1.5 }}>
-          <NavLink to="/" style={{ color: '#1976d2' }}>
+        <Grid item xs={3} sx={{ textAlign: 'right', py: 1.5}}>
+          <NavLink to="/login" style={{ color: '#1976d2' }}>
             <Typography variant="caption">
               Already have an account? Sign in
             </Typography>
