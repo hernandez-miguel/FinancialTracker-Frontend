@@ -1,10 +1,20 @@
 import { Outlet } from "react-router-dom";
+import useAuth from "../hooks/useAuth.hook";
+import Container from '@mui/material/Container';
+import NavBar from './NavBar';
 
 const Layout = () => {
+  const { auth } = useAuth();
   return (
-    <main className="App"> 
-      <Outlet />
-    </main>
+    <> 
+    {
+      auth?.email &&
+        <NavBar />
+    }
+      <Container> 
+        <Outlet />
+      </Container>
+    </>
   )
 }
 

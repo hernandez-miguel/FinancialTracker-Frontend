@@ -47,7 +47,7 @@ function LoginPage() {
       const roles = response?.data?.roles;
 
       setAuth({ email, password, roles, accessToken });
-      navigate(from, { replace:true });
+      navigate(from, { replace: true });
 
       console.log(response);
     } catch (err) {
