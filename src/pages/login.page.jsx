@@ -8,14 +8,17 @@ import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/login.style.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth.hook';
+import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
 
 const LOGIN_URL = '/auth';
+const GETEXPENSES_URL = '/api/expenses';
 
 function LoginPage() {
   const { setAuth } = useAuth();
+  const  { setExpensesData }  = useData();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,14 +45,29 @@ function LoginPage() {
           withCredentials: true
         }
       );
-      
+
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
+      const userId = response?.data?.userId;
 
-      setAuth({ email, password, roles, accessToken });
+      const secondResponse = await axios.get(
+        GETEXPENSES_URL + `/${userId}`, 
+        {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+          withCredentials: true
+        }
+      );
+        
+      const data = secondResponse?.data;
+
+      setExpensesData((prevData) => {
+        const copyState = [...prevData];
+        return([...copyState, ...data ]);
+      });
+
+      setAuth({ userId, roles, accessToken });
       navigate(from, { replace: true });
 
-      console.log(response);
     } catch (err) {
         if (!err?.response) {
             setShowErrMsg(true);
@@ -59,10 +77,11 @@ function LoginPage() {
             setErrMsg('Unauthorized');
         } else {
             setShowErrMsg(true);
-            setErrMsg('Registration failed');
+            setErrMsg('Login failed');
         }
     }
   }
+ 
   return (
     <Box
       sx={{

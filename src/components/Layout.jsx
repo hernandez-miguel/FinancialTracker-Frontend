@@ -8,7 +8,7 @@ const Layout = () => {
   return (
     <> 
     {
-      auth?.email &&
+      auth?.userId &&
         <NavBar />
     }
       <Container> 

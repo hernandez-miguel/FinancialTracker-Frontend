@@ -14,6 +14,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Switch from '@mui/material/Switch';
 import useAuth from '../hooks/useAuth.hook';
+import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
 import { useState } from 'react';
 
@@ -23,6 +24,7 @@ const settings = ['Account', 'Logout'];
 
 function NavBar() {
   const { setAuth } = useAuth();
+  const { setExpensesData, setBalancesData } = useData();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -43,6 +45,8 @@ function NavBar() {
 
   const handleLogout = async () => {
     setAuth('');
+    setExpensesData([]);
+    setBalancesData([]);
     const response = await axios.get(LOGOUT_URL);
   }
 

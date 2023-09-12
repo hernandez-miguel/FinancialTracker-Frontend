@@ -13,7 +13,7 @@ import axios from '../api/axios';
 import '../styles/register.page.css';
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_]).{8,24}$/;
-const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+const EMAIL_REGEX = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const REGISTER_URL = '/register';
 
 function RegisterPage() {
@@ -79,11 +79,10 @@ function RegisterPage() {
       
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
+      const userId = response?.data?.userId;
 
-      setAuth({ email, password, roles, accessToken });
+      setAuth({ userId, roles, accessToken });
       navigate(from, { replace:true });
-
-      console.log(response);
     } catch (err) {
         if (!err?.response) {
             setShowErrMsg(true);
