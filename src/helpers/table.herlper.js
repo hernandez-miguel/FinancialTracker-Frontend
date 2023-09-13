@@ -1,3 +1,21 @@
+import { useEffect, useState } from "react";
+
+export function useDebounceValue(value, time) {
+  const [debounceValue, setDebounceValue] = useState(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceValue(value);
+    }, time)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [value, time]);
+
+  return debounceValue;
+}
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;

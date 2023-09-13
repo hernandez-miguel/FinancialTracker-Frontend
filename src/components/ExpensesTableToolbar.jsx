@@ -6,18 +6,67 @@ import IconButton from '@mui/material/IconButton';
 import CreateIcon from '@mui/icons-material/Create';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import ExpensesModal from './ExpensesModal';
 import DeleteDialog from './DeleteDialog';
-import { useState } from 'react';
+import TextField from '@mui/material/TextField';
+import { useDebounceValue } from '../helpers/table.herlper';
+import { useState, useEffect } from 'react';
+import useAuth from '../hooks/useAuth.hook';
+import useData from '../hooks/useData.hook';
+import axios from '../api/axios';
+
+const REFRESHTOKEN_URL = '/refresh';
+const GETEXPENSES_URL = '/api/expenses';
 
 const ExpensesTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
+  const { auth } = useAuth();
+  const { setExpensesData } = useData();
+  const [debounceValue, setDebounceValue] = useState('')
   const [addBtnIsSelected, setAddBtnIsSelected] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  
+  const searchMerchant = useDebounceValue(debounceValue, 350); 
+
+  const getSearchedMerchant = async () => {
+    try {
+      const firstResponse = await axios.get(REFRESHTOKEN_URL, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      });
+
+      const newAccessToken = firstResponse?.data?.accessToken;
+
+      const secondResponse = await axios.get(
+        GETEXPENSES_URL + `/${auth.userId}`, 
+        {
+          headers: { 'Authorization': `Bearer ${newAccessToken}` },
+          withCredentials: true
+        }
+      );
+
+      const data = secondResponse?.data;
+      const copyData = [...data];
+
+      const foundMerchantArr = copyData.filter((expense) => {
+        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+          return true;
+        }
+      })
+
+      setExpensesData([...foundMerchantArr]);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  
+  useEffect(() => {
+    getSearchedMerchant();
+  }, [searchMerchant])
 
   const handleEditBtn = () => {
     setShowModal(true);
@@ -31,7 +80,6 @@ const ExpensesTableToolbar = (props) => {
   const handleDeleteBtn = () => {
     setShowDeleteDialog(true);
   }
-
   return (
     <>
       <Toolbar
@@ -44,42 +92,68 @@ const ExpensesTableToolbar = (props) => {
           }),
         }}
       >
-        <Stack direction={'row'} sx={{ width: '100%', alignItems: 'center' }}>
+        <Grid 
+          container
+          spacing={2}
+          sx={{ 
+            width: '100%', 
+            alignItems: 'center',
+          }}
+        >
           {numSelected > 0 ? (
-            <Typography
-              sx={{ flex: '1 1 100%' }}
-              color="inherit"
-              variant="subtitle1"
-              component="div"
-            >
-              {numSelected} selected
-            </Typography>
+            <Grid item sm={numSelected > 1 ? 11.25 : 10.5} xs={numSelected > 1 ? 10.5 : 9}>
+              <Typography
+                color="inherit"
+                variant="subtitle1"
+                component="div"
+              >
+                {numSelected} selected
+              </Typography>
+            </Grid>
           ) : (
-            <Button
-              variant='contained'
-              startIcon={<AddIcon />}
-              onClick={handleAddBtn}
-            >
-              ADD EXPENSE
-            </Button>
+            <>
+              <Grid item xs={6.2} sm={9.5}>
+                <Button
+                  variant='contained'
+                  startIcon={<AddIcon />}
+                  onClick={handleAddBtn}
+                >
+                  ADD EXPENSE
+                </Button>
+              </Grid>
+              <Grid item xs={5.8} sm={2.5}>
+                <TextField 
+                  autoComplete='off'
+                  type='search'
+                  label="Search by merchant" 
+                  variant="standard"  
+                  value={debounceValue}
+                  onChange={(ev) => setDebounceValue(ev.target.value)}
+                />
+              </Grid>
+            </>
           )}
 
           {numSelected === 1 && 
-            <Tooltip title="Edit" >
-              <IconButton color='primary' onClick={handleEditBtn}>
-                <CreateIcon />
-              </IconButton>
-            </Tooltip>
+            <Grid item sm={.75} xs={1.5}>
+              <Tooltip title="Edit" >
+                <IconButton color='primary' onClick={handleEditBtn}>
+                  <CreateIcon />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           }
 
           {numSelected >= 1 && 
-            <Tooltip title="Delete">
-              <IconButton color='primary' onClick={handleDeleteBtn}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <Grid item sm={.75} xs={1.5}>
+              <Tooltip title="Delete">
+                <IconButton color='primary' onClick={handleDeleteBtn}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Grid>
           }
-        </Stack>
+        </Grid>
       </Toolbar>
 
       {showDeleteDialog && 
