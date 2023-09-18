@@ -16,14 +16,13 @@ import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
 export default function ExpensesTable() {
-  const { expensesData } = useData();
+  const { expensesTableView } = useData();
   const { selectedExpenses, setSelectedExpenses } = useData();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('date');
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -33,7 +32,7 @@ export default function ExpensesTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = expensesData.map((n) => n._id);
+      const newSelected = expensesTableView.map((n) => n._id);
       setSelectedExpenses(newSelected);
       return;
     }
@@ -77,18 +76,18 @@ export default function ExpensesTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expensesData.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - expensesTableView.length) : 0;
 
   const visibleRows = useMemo(() =>
-      stableSort(expensesData, getComparator(order, orderBy)).slice(
+      stableSort(expensesTableView, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage, expensesData],
+    [order, orderBy, page, rowsPerPage, expensesTableView],
   );
 
   return (
-    <Box sx={{ width: '100%', py: 2 }}>
+    <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <ExpensesTableToolbar 
           selectedArr={selectedExpenses} 
@@ -106,7 +105,7 @@ export default function ExpensesTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={expensesData.length}
+              rowCount={expensesTableView.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
@@ -164,7 +163,7 @@ export default function ExpensesTable() {
         <TablePagination
           rowsPerPageOptions={[10, 15, 25]}
           component="div"
-          count={expensesData.length}
+          count={expensesTableView.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

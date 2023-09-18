@@ -13,6 +13,7 @@ const REFRESHTOKEN_URL = '/refresh';
 
 const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) => {
   const { expensesData, setExpensesData } = useData();
+  const { setExpensesTableView } = useData();
   const { setSelectedExpenses } = useData();
   const removeList = [];
 
@@ -69,7 +70,13 @@ const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) =>
         const copyState = [...prevData];
         const newArr = removeItemsByIndices(copyState, removeList);
         return (newArr);
-      })
+      });
+
+      setExpensesTableView((prevData) => {
+        const copyState = [...prevData];
+        const newArr = removeItemsByIndices(copyState, removeList);
+        return (newArr);
+      });
     } catch (err) {
       console.error(err);
     }

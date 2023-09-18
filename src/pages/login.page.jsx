@@ -17,7 +17,8 @@ const GETEXPENSES_URL = '/api/expenses';
 
 function LoginPage() {
   const { setAuth } = useAuth();
-  const  { setExpensesData }  = useData();
+  const { setExpensesData }  = useData();
+  const { setExpensesTableView } = useData();
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -61,7 +62,12 @@ function LoginPage() {
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
-        return([...copyState, ...data ]);
+        return ([...copyState, ...data ]);
+      });
+
+      setExpensesTableView((prevData) => {
+        const copyState = [...prevData];
+        return ([...copyState, ...data]);
       });
 
       setAuth({ userId, roles, accessToken });

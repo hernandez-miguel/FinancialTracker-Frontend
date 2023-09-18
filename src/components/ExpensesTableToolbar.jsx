@@ -14,58 +14,26 @@ import DeleteDialog from './DeleteDialog';
 import TextField from '@mui/material/TextField';
 import { useDebounceValue } from '../helpers/table.herlper';
 import { useState, useEffect } from 'react';
-import useAuth from '../hooks/useAuth.hook';
 import useData from '../hooks/useData.hook';
-import axios from '../api/axios';
-
-const REFRESHTOKEN_URL = '/refresh';
-const GETEXPENSES_URL = '/api/expenses';
 
 const ExpensesTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
-  const { auth } = useAuth();
-  const { setExpensesData } = useData();
+  const { expensesData, setExpensesTableView } = useData();
   const [debounceValue, setDebounceValue] = useState('')
   const [addBtnIsSelected, setAddBtnIsSelected] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const searchMerchant = useDebounceValue(debounceValue, 350); 
-
-  const getSearchedMerchant = async () => {
-    try {
-      const firstResponse = await axios.get(REFRESHTOKEN_URL, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-
-      const newAccessToken = firstResponse?.data?.accessToken;
-
-      const secondResponse = await axios.get(
-        GETEXPENSES_URL + `/${auth.userId}`, 
-        {
-          headers: { 'Authorization': `Bearer ${newAccessToken}` },
-          withCredentials: true
-        }
-      );
-
-      const data = secondResponse?.data;
-      const copyData = [...data];
-
-      const foundMerchantArr = copyData.filter((expense) => {
-        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
-          return true;
-        }
-      })
-
-      setExpensesData([...foundMerchantArr]);
-    } catch (err) {
-      console.error(err);
-    }
-  }
   
   useEffect(() => {
-    getSearchedMerchant();
+    const foundMerchantArr = expensesData.filter((expense) => {
+      if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+        return true;
+      }
+    });
+
+    setExpensesTableView([...foundMerchantArr]);
   }, [searchMerchant])
 
   const handleEditBtn = () => {
