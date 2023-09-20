@@ -17,10 +17,10 @@ import useData from '../hooks/useData.hook';
 
 export default function ExpensesTable() {
   const { expensesTableView } = useData();
+  const { page, setPage } = useData();
   const { selectedExpenses, setSelectedExpenses } = useData();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('date');
-  const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 

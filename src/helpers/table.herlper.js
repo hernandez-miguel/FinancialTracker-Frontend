@@ -43,3 +43,45 @@ export function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
+
+export function getYears(arr) {
+  return Object.keys(arr.reduce((acc, curr) => {
+    const { date, amount } = curr;
+    
+    if (!acc[date.slice(0, 4)]) {
+      acc[date.slice(0, 4)] = 0;
+    }
+
+    acc[date.slice(0, 4)] += amount;
+
+    return acc;
+  }, {}))
+}
+
+export function getLabels(arr) {
+   return Object.keys(arr.reduce((acc, curr) => {
+    const { category, amount } = curr;
+  
+    if (!acc[category]) {
+      acc[category] = 0;
+    }
+
+    acc[category] += amount;
+
+    return acc;
+  }, {}))
+}
+
+export function getData(arr) {
+  return Object.values(arr.reduce((acc, curr) => {
+    const { category, amount } = curr;
+  
+    if (!acc[category]) {
+      acc[category] = 0;
+    }
+
+    acc[category] += amount;
+
+    return acc;
+  }, {}))
+}

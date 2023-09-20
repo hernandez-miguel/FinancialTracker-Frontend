@@ -19,6 +19,8 @@ import useData from '../hooks/useData.hook';
 const ExpensesTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
   const { expensesData, setExpensesTableView } = useData();
+  const { setPage } = useData();
+  const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
   const [addBtnIsSelected, setAddBtnIsSelected] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -27,13 +29,25 @@ const ExpensesTableToolbar = (props) => {
   const searchMerchant = useDebounceValue(debounceValue, 350); 
   
   useEffect(() => {
-    const foundMerchantArr = expensesData.filter((expense) => {
-      if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
-        return true;
-      }
-    });
+    if(filteredData.length > 0) {
+      const foundMerchantArr = filteredData.filter((expense) => {
+        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+          return true;
+        }
+      });
 
-    setExpensesTableView([...foundMerchantArr]);
+      setExpensesTableView([...foundMerchantArr]);
+      setPage(0);
+    } else {
+      const foundMerchantArr = expensesData.filter((expense) => {
+        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+          return true;
+        }
+      });
+
+      setExpensesTableView([...foundMerchantArr]);
+      setPage(0);
+    }
   }, [searchMerchant])
 
   const handleEditBtn = () => {

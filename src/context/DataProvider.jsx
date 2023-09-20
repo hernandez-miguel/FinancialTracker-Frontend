@@ -7,6 +7,8 @@ export const DataProvider = ({ children }) => {
   const [balancesData, setBalancesData] = useState([]);
   const [expensesTableView, setExpensesTableView] = useState([]);
   const [selectedExpenses, setSelectedExpenses] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [page, setPage] = useState(0);
 
   return (
     <DataContext.Provider value={{ 
@@ -17,7 +19,11 @@ export const DataProvider = ({ children }) => {
       selectedExpenses, 
       setSelectedExpenses,
       expensesTableView,
-      setExpensesTableView
+      setExpensesTableView,
+      filteredData,
+      setFilteredData,
+      page,
+      setPage
     }}>
       {children}
     </DataContext.Provider>

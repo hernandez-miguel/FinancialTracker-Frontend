@@ -25,6 +25,9 @@ const settings = ['Account', 'Logout'];
 function NavBar() {
   const { setAuth } = useAuth();
   const { setExpensesData, setBalancesData } = useData();
+  const { setExpensesTableView } = useData();
+  const { setFilteredData } = useData();
+  const { setSelectedExpenses } = useData();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -47,6 +50,9 @@ function NavBar() {
     setAuth('');
     setExpensesData([]);
     setBalancesData([]);
+    setExpensesTableView([]);
+    setSelectedExpenses([]);
+    setFilteredData([]);
     const response = await axios.get(LOGOUT_URL);
   }
 

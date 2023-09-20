@@ -41,7 +41,6 @@ const ExpensesModal = ({
   setAddBtnIsSelected,
 }) => {
   const { expensesData, setExpensesData } = useData();
-  const { setExpensesTableView } = useData();
   const { setSelectedExpenses } = useData();
   const { auth } = useAuth();
 
@@ -67,6 +66,7 @@ const ExpensesModal = ({
 
   const categoryList = [
     'Dining out',
+    'Entertainment',
     'Groceries',
     'Insurance',
     'Materials/Supplies',
@@ -143,18 +143,12 @@ const ExpensesModal = ({
         category: updatedExpense.category,
         note: updatedExpense.note
       }
-
+      
       const foundIndex = expensesData.findIndex((item) => {
         return item._id === selectedItemId;
       })
-  
-      setExpensesData((prevData) => {
-        const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedExpensesObj)
-        return (copyData);
-      });
 
-      setExpensesTableView((prevData) => {
+      setExpensesData((prevData) => {
         const copyData = [...prevData];
         copyData.splice(foundIndex, 1, updatedExpensesObj)
         return (copyData);
@@ -194,11 +188,6 @@ const ExpensesModal = ({
       const newData = secondResponse?.data;
 
       setExpensesData((prevData) => {
-        const copyData = [...prevData];
-        return [...copyData, newData];
-      });
-
-      setExpensesTableView((prevData) => {
         const copyData = [...prevData];
         return [...copyData, newData];
       });
