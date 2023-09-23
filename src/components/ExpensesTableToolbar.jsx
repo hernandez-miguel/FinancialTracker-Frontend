@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import ExpensesModal from './ExpensesModal';
 import DeleteDialog from './DeleteDialog';
 import TextField from '@mui/material/TextField';
-import { useDebounceValue } from '../helpers/table.herlper';
+import { useDebounceValue } from '../helpers/expensesPage.helper';
 import { useState, useEffect } from 'react';
 import useData from '../hooks/useData.hook';
 

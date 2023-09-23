@@ -1,104 +1,138 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Pie } from 'react-chartjs-2';
-import { Bar } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js/auto';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
-import { getLabels, getData, getYears } from '../helpers/table.herlper';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { getPieLabels, getPieData, getBarData } from '../helpers/expensesPage.helper';
+import { getMonthList, getYears, getTotal } from '../helpers/expensesPage.helper';
+import { getBackgroundColor, getBorderColor } from '../helpers/expensesPage.helper';
 
 const ExpensesCharts = () => {
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
+  const [expensesTotal, setExpensesTotal] = useState(0);
   const { expensesData } = useData();
-  const { setExpensesTableView } = useData();
+  const { expensesTableView, setExpensesTableView } = useData();
   const { setFilteredData } = useData();
   const { setPage } = useData();
 
-  const monthList = [];
-
-  for (let i = 1; i <= 12; i ++) {
-    if (i < 10) {
-      monthList.push('0' + i);
-    } else {
-      monthList.push(i.toString());
-    }
-  }
-
+  const maxWidth = useMediaQuery('(max-width:600px)');
+  const monthList = getMonthList();
   const yearList = getYears(expensesData);
 
-  const backgroundColor = [
-    'rgba(255, 0, 0, 0.2)',      
-    'rgba(0, 0, 255, 0.2)',      
-    'rgba(0, 255, 0, 0.2)',      
-    'rgba(255, 255, 0, 0.2)',    
-    'rgba(255, 0, 255, 0.2)',    
-    'rgba(0, 255, 255, 0.2)',    
-    'rgba(128, 128, 128, 0.2)',  
-    'rgba(255, 165, 0, 0.2)',    
-    'rgba(0, 128, 0, 0.2)',      
-    'rgba(128, 0, 128, 0.2)',    
-    'rgba(0, 0, 0, 0.2)'         
-  ]
-  
-  const borderColor = [
-    'rgba(255, 0, 0, 1)',      
-    'rgba(0, 0, 255, 1)',      
-    'rgba(0, 255, 0, 1)',      
-    'rgba(255, 255, 0, 1)',    
-    'rgba(255, 0, 255, 1)',    
-    'rgba(0, 255, 255, 1)',    
-    'rgba(128, 128, 128, 1)',  
-    'rgba(255, 165, 0, 1)',    
-    'rgba(0, 128, 0, 1)',      
-    'rgba(128, 0, 128, 1)',    
-    'rgba(0, 0, 0, 1)'    
-  ]
+  const backgroundColor = getBackgroundColor();
+  const borderColor = getBorderColor();
 
-  const labels = getLabels(expensesData);
-  const data = getData(expensesData);
+  const pieChartLabels = getPieLabels(expensesData);
+  const pieChartData = getPieData(expensesData);
+
+  const barChartData = getBarData(expensesData);
 
   const [pieData, setPieData] = useState({
-    labels: labels,
+    labels: pieChartLabels,
     datasets: [
       {
-        label: 'total spent $',
-        data: data,
+        data: pieChartData,
         backgroundColor: backgroundColor.map((color) => color),
         borderColor: borderColor.map((color) => color),
         borderWidth: 1,
       },
     ],
   });
-  
+
+  const pieChartOptions = {
+    responsive: true,
+    aspectRatio: maxWidth ? 1.25 : 3.25,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Expense by Category',
+        align: 'center',
+      },
+    },
+  };
+
+  const [barData, setBarData] = useState({
+    labels: monthList.map((item) => item.month),
+    datasets: [
+      {
+        data: barChartData,
+        backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)'],
+        borderWidth: 1,
+      },
+    ],
+  });
+
+  const barChartOptions = {
+    responsive: true,
+    aspectRatio: maxWidth ? 1.25 : 3.25,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Monthly Total',
+        align: 'center',
+      },
+    },
+    scales: {
+      y: {
+        ticks: {
+          format: { maximumFractionDigits: 2, minimumFractionDigits: 2 },
+          callback: (value, index, values) => {
+            return '$' + value;
+          },
+        },
+      },
+    },
+  };
+
   useEffect(() => {
-    if(month && !year) {
+    if (month && !year) {
       const filterByMonth = expensesData.filter((expense) => {
         if (expense.date.slice(5, 7) === month) {
           return true;
         }
       });
 
-      setFilteredData([...filterByMonth])
+      setExpensesTotal(getTotal(filterByMonth));
+      setFilteredData([...filterByMonth]);
       setExpensesTableView([...filterByMonth]);
       setPage(0);
 
       setPieData({
-        labels: getLabels(filterByMonth),
+        labels: getPieLabels(filterByMonth),
         datasets: [
           {
             label: 'total spent $',
-            data: getData(filterByMonth),
+            data: getPieData(filterByMonth),
             backgroundColor: backgroundColor.map((color) => color),
             borderColor: borderColor.map((color) => color),
             borderWidth: 1,
           },
         ],
-      })
+      });
+
+      setBarData({
+        labels: monthList.map((item) => item.month),
+        datasets: [
+          {
+            label: 'total spent $',
+            data: getBarData(filterByMonth),
+            backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            borderWidth: 1,
+          },
+        ],
+      });
     } else if (year && !month) {
       const filterByYear = expensesData.filter((expense) => {
         if (expense.date.slice(0, 4) === year) {
@@ -106,22 +140,36 @@ const ExpensesCharts = () => {
         }
       });
 
-      setFilteredData([...filterByYear])
+      setFilteredData([...filterByYear]);
       setExpensesTableView([...filterByYear]);
+      setExpensesTotal(getTotal(filterByYear));
       setPage(0);
 
       setPieData({
-        labels: getLabels(filterByYear),
+        labels: getPieLabels(filterByYear),
         datasets: [
           {
             label: 'total spent $',
-            data: getData(filterByYear),
+            data: getPieData(filterByYear),
             backgroundColor: backgroundColor.map((color) => color),
             borderColor: borderColor.map((color) => color),
             borderWidth: 1,
           },
         ],
-      })
+      });
+
+      setBarData({
+        labels: monthList.map((item) => item.month),
+        datasets: [
+          {
+            label: 'total spent $',
+            data: getBarData(filterByYear),
+            backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            borderWidth: 1,
+          },
+        ],
+      });
     } else if (year && month) {
       const initialFilter = expensesData.filter((expense) => {
         if (expense.date.slice(0, 4) === year) {
@@ -134,86 +182,130 @@ const ExpensesCharts = () => {
         }
       });
 
-      setFilteredData([...filterByMonthAndYear])
+      setFilteredData([...filterByMonthAndYear]);
       setExpensesTableView([...filterByMonthAndYear]);
+      setExpensesTotal(getTotal(filterByMonthAndYear));
       setPage(0);
 
       setPieData({
-        labels: getLabels(filterByMonthAndYear),
+        labels: getPieLabels(filterByMonthAndYear),
         datasets: [
           {
             label: 'total spent $',
-            data: getData(filterByMonthAndYear),
+            data: getPieData(filterByMonthAndYear),
             backgroundColor: backgroundColor.map((color) => color),
             borderColor: borderColor.map((color) => color),
             borderWidth: 1,
           },
         ],
-      })
+      });
+
+      setBarData({
+        labels: monthList.map((item) => item.month),
+        datasets: [
+          {
+            label: 'total spent $',
+            data: getBarData(filterByMonthAndYear),
+            backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            borderWidth: 1,
+          },
+        ],
+      });
     } else {
       setFilteredData([]);
       setExpensesTableView([...expensesData]);
+      setExpensesTotal(getTotal(expensesData));
       setPage(0);
 
       setPieData({
-        labels: getLabels(expensesData),
+        labels: getPieLabels(expensesData),
         datasets: [
           {
             label: 'total spent $',
-            data: getData(expensesData),
+            data: getPieData(expensesData),
             backgroundColor: backgroundColor.map((color) => color),
             borderColor: borderColor.map((color) => color),
             borderWidth: 1,
           },
         ],
-      })
+      });
+
+      setBarData({
+        labels: monthList.map((item) => item.month),
+        datasets: [
+          {
+            label: 'total spent $',
+            data: getBarData(expensesData),
+            backgroundColor: ['rgba(255, 99, 132, 0.2)'],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            borderWidth: 1,
+          },
+        ],
+      });
     }
   }, [year, month, expensesData]);
 
   return (
-    <Box sx={{ width: '100%', py: 1.5 }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">Year</InputLabel>
-          <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
-            value={year}
-            onChange={(ev) => setYear(ev.target.value)}
-            label="year"
-          >
-            <MenuItem value="">
-              <em>Show all</em>
-            </MenuItem>
-            {
-              yearList.map((year) => {
-                return (<MenuItem key={year} value={year}>{year}</MenuItem>);
-              })
-            }
-          </Select>
-        </FormControl>
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="demo-simple-select-standard-label">Month</InputLabel>
-          <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
-            value={month}
-            onChange={(ev) => setMonth(ev.target.value)}
-            label="Month"
-          >
-            <MenuItem value="">
-              <em>Show all</em>
-            </MenuItem>
-            {
-              monthList.map((month) => {
-                return (<MenuItem key={month} value={month}>{month}</MenuItem>);
-              })
-            }
-          </Select>
-        </FormControl>
-        <Box sx={{ width: 350, p: 1 }}>
-          <Pie data={pieData} />
-        </Box>
+    <Box sx={{ width: '100%', paddingTop: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2, p: 1.5 }}>
+        <Stack direction={'row'} justifyContent={ maxWidth ? 'center' : 'start'}>
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="year-selector-label">Year</InputLabel>
+            <Select
+              labelId="year-selector-label"
+              id="year-selector"
+              value={year}
+              onChange={(ev) => setYear(ev.target.value)}
+              label="year"
+            >
+              <MenuItem value="">
+                <em>Show all</em>
+              </MenuItem>
+              {yearList.map((year) => {
+                return (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="month-selector-label">Month</InputLabel>
+            <Select
+              labelId="month-selector-label"
+              id="month-selector"
+              value={month}
+              onChange={(ev) => setMonth(ev.target.value)}
+              label="Month"
+            >
+              <MenuItem value="">
+                <em>Show all</em>
+              </MenuItem>
+              {monthList.map((item) => {
+                return (
+                  <MenuItem key={item.key} value={item.key}>
+                    {item.month}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Stack>
+        <Stack direction={'column'} spacing={2} textAlign={'center'}>
+          {expensesTableView.length > 0 ? (
+            <>
+              <Pie data={pieData} options={pieChartOptions} />
+              <Bar data={barData} options={barChartOptions} />
+              <Typography marginTop={'25px'} variant="subtitle2">
+                {`Total Expenses: $${expensesTotal.toFixed(2)}`}
+              </Typography>
+            </>
+          ) : (
+            <h4>No data available</h4>
+          )}
+        </Stack>
       </Paper>
     </Box>
   );

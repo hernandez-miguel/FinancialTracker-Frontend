@@ -11,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
 import ExpensesTableHead from "./ExpensesTableHead";
 import ExpensesTableToolbar from './ExpensesTableToolbar';
-import { getComparator, stableSort } from "../helpers/table.herlper";
+import { getComparator, stableSort } from "../helpers/expensesPage.helper";
 import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
@@ -142,7 +142,7 @@ export default function ExpensesTable() {
                       {row.merchant}
                     </TableCell>
                     <TableCell align='left'>{row.date}</TableCell>
-                    <TableCell align='left'>{`$ ${row.amount}`}</TableCell>
+                    <TableCell align='left'>{`$ ${row.amount.toFixed(2)}`}</TableCell>
                     <TableCell align='left'>{row.category}</TableCell>
                     <TableCell align='left'>{row.note}</TableCell>
                   </TableRow>

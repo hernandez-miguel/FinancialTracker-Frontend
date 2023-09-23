@@ -79,7 +79,7 @@ function LoginPage() {
             setErrMsg('No server response');
         } else if (err.response?.status === 401) {
             setShowErrMsg(true);
-            setErrMsg('Unauthorized');
+            setErrMsg('Incorrect email or password');
         } else {
             setShowErrMsg(true);
             setErrMsg('Login failed');
