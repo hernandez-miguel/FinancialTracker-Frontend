@@ -104,7 +104,7 @@ const ExpensesTableToolbar = (props) => {
                 </Button>
               </Grid>
               <Grid item xs={5.8} sm={2.5}>
-                <TextField 
+                <TextField
                   autoComplete='off'
                   type='search'
                   label="Search by merchant" 

@@ -10,9 +10,6 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Switch from '@mui/material/Switch';
 import useAuth from '../hooks/useAuth.hook';
 import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
@@ -20,7 +17,7 @@ import { useState } from 'react';
 
 const LOGOUT_URL = '/logout';
 const pages = ['Dashboard', 'Networth', 'Admin'];
-const settings = ['Account', 'Logout'];
+const settings = ['Logout'];
 
 function NavBar() {
   const { setAuth } = useAuth();
@@ -57,10 +54,10 @@ function NavBar() {
   }
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }}}>
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
@@ -93,7 +90,7 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex'}}}>
             {pages.map((page) => (
               <Button
                 key={page}
@@ -126,14 +123,6 @@ function NavBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem onClick={handleCloseUserMenu}>
-                <FormGroup>
-                  <FormControlLabel
-                    control={ <Switch onChange={handleCloseUserMenu}/> }
-                    label={'dark mode'}
-                  />
-                </FormGroup>
-              </MenuItem>
               {settings.map((setting) => (
                 setting === 'Logout' ? 
                   <MenuItem key={setting} onClick={handleLogout}>
