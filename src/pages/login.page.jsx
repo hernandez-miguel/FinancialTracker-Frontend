@@ -14,6 +14,7 @@ import axios from '../api/axios';
 
 const LOGIN_URL = '/auth';
 const GETEXPENSES_URL = '/api/expenses';
+const GETBALANCES_URL = '/api/balances';
 
 function LoginPage() {
   const { setAuth } = useAuth();
@@ -37,7 +38,7 @@ function LoginPage() {
     setPassword('');
 
     try {
-      const response = await axios.post(
+      const firstResponse = await axios.post(
         LOGIN_URL, 
         JSON.stringify({ email, password }),
         {
@@ -46,9 +47,9 @@ function LoginPage() {
         }
       );
 
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      const userId = response?.data?.userId;
+      const accessToken = firstResponse?.data?.accessToken;
+      const roles = firstResponse?.data?.roles;
+      const userId = firstResponse?.data?.userId;
 
       const secondResponse = await axios.get(
         GETEXPENSES_URL + `/${userId}`, 
@@ -57,17 +58,28 @@ function LoginPage() {
           withCredentials: true
         }
       );
+
+      const thirdResponse = await axios.get(
+        GETBALANCES_URL + `/${userId}`, 
+        {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+          withCredentials: true
+        }
+      );
         
-      const data = secondResponse?.data;
+      const expensesData = secondResponse?.data;
+      const balancesData = thirdResponse?.data;
+
+      console.log(balancesData);
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
-        return ([...copyState, ...data ]);
+        return ([...copyState, ...expensesData ]);
       });
 
       setExpensesTableView((prevData) => {
         const copyState = [...prevData];
-        return ([...copyState, ...data]);
+        return ([...copyState, ...expensesData]);
       });
 
       setAuth({ userId, roles, accessToken });

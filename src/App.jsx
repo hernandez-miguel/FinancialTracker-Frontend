@@ -1,4 +1,5 @@
 import { LoginPage, RegisterPage, ExpensesPage } from './pages/index.js';
+import { NetWorthPage, AdminPage } from './pages/index.js';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import { DataProvider } from './context/DataProvider.jsx';
@@ -23,10 +24,12 @@ function App() {
                 <Route element={<RequireAuth allowedRoles={[2001]}/>}>
                   <Route path='/' element={<ExpensesPage />} />
                 </Route>
-
-                {/*<Route element={<RequireAuth allowedRoles={[5150]}/>}>
+                <Route element={<RequireAuth allowedRoles={[2001]}/>}>
+                  <Route path='/networth' element={<NetWorthPage />} />
+                </Route>
+                <Route element={<RequireAuth allowedRoles={[5150]}/>}>
                   <Route path='/admin' element={<AdminPage />} />
-                </Route>/*/}
+                </Route>/
               </Route>
             </Routes>
         </DataProvider>
