@@ -1,8 +1,14 @@
+import NetWorthTable from "../components/NetworthTable";
+import NetWorthChart from "../components/NetWorthChart";
+
 const NetWorthPage = () => {
 
 
   return (
-    <h1>networth page</h1>
+    <>
+      <NetWorthChart />
+      <NetWorthTable />
+    </>
   );
 }
 

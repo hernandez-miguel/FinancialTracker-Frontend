@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import useAuth from '../hooks/useAuth.hook';
 import useData from '../hooks/useData.hook';
@@ -18,12 +18,10 @@ const GETBALANCES_URL = '/api/balances';
 
 function LoginPage() {
   const { setAuth } = useAuth();
-  const { setExpensesData }  = useData();
-  const { setExpensesTableView } = useData();
+  const { setExpensesData, setNetWorthData }  = useData();
   
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+  const from = '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -68,18 +66,16 @@ function LoginPage() {
       );
         
       const expensesData = secondResponse?.data;
-      const balancesData = thirdResponse?.data;
-
-      console.log(balancesData);
+      const netWorthData = thirdResponse?.data;
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
         return ([...copyState, ...expensesData ]);
       });
 
-      setExpensesTableView((prevData) => {
+      setNetWorthData((prevData) => {
         const copyState = [...prevData];
-        return ([...copyState, ...expensesData]);
+        return ([...copyState, ...netWorthData]);
       });
 
       setAuth({ userId, roles, accessToken });

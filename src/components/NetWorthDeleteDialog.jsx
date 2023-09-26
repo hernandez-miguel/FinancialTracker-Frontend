@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,16 +7,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
 
-const EXPENSES_URL = '/api/expenses';
+const BALANCES_URL = '/api/balances';
 const REFRESHTOKEN_URL = '/refresh';
 
-const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) => {
-  const { expensesData, setExpensesData } = useData();
-  const { setSelectedExpenses } = useData();
+const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) => {
+  const { netWorthData, setNetWorthData } = useData();
+  const { setSelectedBalances } = useData();
   const removeList = [];
 
   for(let i = 0; i < selectedArr.length; i++) {
-    const foundIndex = expensesData.findIndex((item) => {
+    const foundIndex = netWorthData.findIndex((item) => {
       return item._id === selectedArr[i];
     })
 
@@ -45,7 +44,7 @@ const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) =>
 
   const handleDelete = async () => {
     setShowDeleteDialog(false);
-    setSelectedExpenses([]);
+    setSelectedBalances([]);
 
     try {
       const firstResponse = await axios.get(REFRESHTOKEN_URL, {
@@ -57,7 +56,7 @@ const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) =>
       
       for(let i = 0; i < selectedArr.length; i++) {
         const secondResponse = await axios.delete(
-          EXPENSES_URL + `/${selectedArr[i]}`,
+          BALANCES_URL + `/${selectedArr[i]}`,
           {
             headers: { Authorization: `Bearer ${newAccessToken}` },
             withCredentials: true,
@@ -65,7 +64,7 @@ const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) =>
         );
       }
 
-      setExpensesData((prevData) => {
+      setNetWorthData((prevData) => {
         const copyState = [...prevData];
         const newArr = removeItemsByIndices(copyState, removeList);
         return (newArr);
@@ -103,4 +102,4 @@ const DeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) =>
   );
 }
 
-export default DeleteDialog;
+export default NetWorthDeleteDialog;

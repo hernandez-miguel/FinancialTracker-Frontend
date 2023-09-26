@@ -4,9 +4,11 @@ const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [expensesData, setExpensesData] = useState([]);
-  const [balancesData, setBalancesData] = useState([]);
+  const [netWorthData, setNetWorthData] = useState([]);
   const [expensesTableView, setExpensesTableView] = useState([]);
+  const [netWorthTableView, setNetWorthTableView] = useState([]);
   const [selectedExpenses, setSelectedExpenses] = useState([]);
+  const [selectedBalances, setSelectedBalances] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [page, setPage] = useState(0);
 
@@ -14,12 +16,16 @@ export const DataProvider = ({ children }) => {
     <DataContext.Provider value={{ 
       expensesData, 
       setExpensesData, 
-      balancesData, 
-      setBalancesData,
+      netWorthData, 
+      setNetWorthData,
       selectedExpenses, 
       setSelectedExpenses,
+      selectedBalances,
+      setSelectedBalances,
       expensesTableView,
       setExpensesTableView,
+      netWorthTableView,
+      setNetWorthTableView,
       filteredData,
       setFilteredData,
       page,

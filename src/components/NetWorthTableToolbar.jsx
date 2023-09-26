@@ -9,16 +9,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
-import ExpensesModal from './ExpensesModal';
-import ExpensesDeleteDialog from './ExpensesDeleteDialog';
+import NetWorthModal from './NetWorthModal';
+import NetWorthDeleteDialog from './NetWorthDeleteDialog';
 import TextField from '@mui/material/TextField';
-import { useDebounceValue } from '../helpers/expensesPage.helper';
+import { useDebounceValue } from '../helpers/networthPage.helper';
 import { useState, useEffect } from 'react';
 import useData from '../hooks/useData.hook';
 
-const ExpensesTableToolbar = (props) => {
+const NetWorthTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
-  const { expensesData, setExpensesTableView } = useData();
+  const { netWorthData, setNetWorthTableView } = useData();
   const { setPage } = useData();
   const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
@@ -26,29 +26,29 @@ const ExpensesTableToolbar = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
-  const searchMerchant = useDebounceValue(debounceValue, 350); 
+  const searchAccount = useDebounceValue(debounceValue, 350); 
   
   useEffect(() => {
     if(filteredData.length > 0) {
       const foundMerchantArr = filteredData.filter((expense) => {
-        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+        if (expense.merchant.toUpperCase().includes(searchAccount.toUpperCase())) {
           return true;
         }
       });
 
-      setExpensesTableView([...foundMerchantArr]);
+      setNetWorthTableView([...foundMerchantArr]);
       setPage(0);
     } else {
-      const foundMerchantArr = expensesData.filter((expense) => {
-        if (expense.merchant.toUpperCase().includes(searchMerchant.toUpperCase())) {
+      const foundAccountArr = netWorthData.filter((expense) => {
+        if (expense.account.toUpperCase().includes(searchAccount.toUpperCase())) {
           return true;
         }
       });
 
-      setExpensesTableView([...foundMerchantArr]);
+      setNetWorthTableView([...foundAccountArr]);
       setPage(0);
     }
-  }, [searchMerchant])
+  }, [searchAccount])
 
   const handleEditBtn = () => {
     setShowModal(true);
@@ -100,14 +100,14 @@ const ExpensesTableToolbar = (props) => {
                   startIcon={<AddIcon />}
                   onClick={handleAddBtn}
                 >
-                  ADD EXPENSE
+                  ADD BALANCE
                 </Button>
               </Grid>
               <Grid item xs={5.8} sm={2.5}>
                 <TextField
                   autoComplete='off'
                   type='search'
-                  label="Search by merchant" 
+                  label="Search by account" 
                   variant="standard"  
                   value={debounceValue}
                   onChange={(ev) => setDebounceValue(ev.target.value)}
@@ -139,7 +139,7 @@ const ExpensesTableToolbar = (props) => {
       </Toolbar>
 
       {showDeleteDialog && 
-        <ExpensesDeleteDialog
+        <NetWorthDeleteDialog
           showDeleteDialog={showDeleteDialog}
           setShowDeleteDialog={setShowDeleteDialog}
           selectedArr={selectedArr}
@@ -147,7 +147,7 @@ const ExpensesTableToolbar = (props) => {
       }
 
       {showModal && 
-        <ExpensesModal 
+        <NetWorthModal
           addBtnIsSelected={addBtnIsSelected}
           setAddBtnIsSelected={setAddBtnIsSelected}
           setShowModal={setShowModal}
@@ -158,9 +158,9 @@ const ExpensesTableToolbar = (props) => {
   );
 }
 
-ExpensesTableToolbar.propTypes = {
+NetWorthTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   selectedArr: PropTypes.array.isRequired,
 };
 
-export default ExpensesTableToolbar
+export default NetWorthTableToolbar;

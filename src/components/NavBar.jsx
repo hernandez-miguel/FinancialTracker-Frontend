@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -20,17 +19,17 @@ const LOGOUT_URL = '/logout';
 
 function NavBar() {
   const { setAuth } = useAuth();
-  const { setExpensesData, setBalancesData } = useData();
-  const { setExpensesTableView } = useData();
+  const { setExpensesData, setNetWorthData } = useData();
+  const { setExpensesTableView, setNetWorthTableView } = useData();
   const { setFilteredData } = useData();
-  const { setSelectedExpenses } = useData();
+  const { setSelectedExpenses, setSelectedBalances } = useData();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   
   const pages = [
     {
       path: '/',
-      name: 'Expenses'
+      name: 'Dashboard'
     },
     {
       path: '/networth',
@@ -46,25 +45,35 @@ function NavBar() {
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
+    setSelectedExpenses([]);
+    setSelectedBalances([]);
   };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
+    setSelectedExpenses([]);
+    setSelectedBalances([]);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+    setSelectedExpenses([]);
+    setSelectedBalances([]);
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+    setSelectedExpenses([]);
+    setSelectedBalances([]);
   };
 
   const handleLogout = async () => {
     setAuth('');
     setExpensesData([]);
-    setBalancesData([]);
+    setNetWorthData([]);
     setExpensesTableView([]);
+    setNetWorthTableView([]);
     setSelectedExpenses([]);
+    setSelectedBalances([]);
     setFilteredData([]);
     const response = await axios.get(LOGOUT_URL);
   }
