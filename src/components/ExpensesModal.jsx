@@ -19,7 +19,7 @@ const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
 
 const DATE_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
-const AMOUNT_REGEX = /^(?:\d{2,}|\d+\.\d{2})$/;
+const AMOUNT_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
 
 const style = {
   position: 'absolute',
@@ -63,6 +63,7 @@ const ExpensesModal = ({
   const selectedItemId = selectedArr[0];
 
   const dateErrMsg = 'Format: yyyy-mm-dd';
+  const amountErrMsg = 'Format: xxxx.xx, or xxxx';
 
   const categoryList = [
     'Dining out',
@@ -251,7 +252,7 @@ const ExpensesModal = ({
             onChange={(ev) => setAmount(ev.target.value)}
             error={amountFocus && !AMOUNT_REGEX.test(amount) ? true : false} 
             helperText={
-              amountFocus && !AMOUNT_REGEX.test(amount) ? 'Enter amount' : ''
+              amountFocus && !AMOUNT_REGEX.test(amount) ? amountErrMsg : ''
             }
             onFocus={() => setAmountFocus(true)}
             onBlur={() => setAmountFocus(false)}

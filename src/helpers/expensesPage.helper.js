@@ -44,6 +44,24 @@ export function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+export function formatAmount(amount) {
+  if (amount < 0) {
+    amount *= -1;
+  }
+
+  // Convert the number to a string
+  amount = amount.toFixed(2);
+  
+  // Split the string into integer and decimal parts (if any)
+  let parts = amount.split('.');
+  
+  // Add commas to the integer part
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+  // Join the integer and decimal parts (if any) and return
+  return parts.join('.');
+}
+
 export function getYears(arr) {
   return Object.keys(arr.reduce((acc, curr) => {
     const { date, amount } = curr;

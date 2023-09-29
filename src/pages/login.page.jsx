@@ -70,7 +70,7 @@ function LoginPage() {
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
-        return ([...copyState, ...expensesData ]);
+        return ([...copyState, ...expensesData]);
       });
 
       setNetWorthData((prevData) => {

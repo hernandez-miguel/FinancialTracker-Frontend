@@ -14,12 +14,12 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
+import { getNetChg, getPercentChg } from '../helpers/networthPage.helper';
 
 const BALANCES_URL = '/api/balances';
 const REFRESHTOKEN_URL = '/refresh';
 
-const YEAR_REGEX = /^\d{4}$/;
-const AMOUNT_REGEX = /^(?:\d{2,}|\d+\.\d{2})$/;
+const AMOUNT_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
 
 const style = {
   position: 'absolute',
@@ -47,10 +47,6 @@ const NetWorthModal = ({
   const [account, setAccount] = useState('');
   const [accountFocus, setAccountFocus] = useState(false);
 
-  const [year, setYear] = useState('');
-  const [yearFocus, setYearFocus] = useState(false);
-  const [validYear, setValidYear] = useState(false);
-
   const [amount, setAmount] = useState('');
   const [amountFocus, setAmountFocus] = useState(false);
   const [validAmount, setValidAmount] = useState(false);
@@ -58,41 +54,28 @@ const NetWorthModal = ({
   const [category, setCategory] = useState('');
   const [categoryFocus, setCategoryFocus] = useState(false);
 
-  const [note, setNote] = useState('');
-
   const selectedItemId = selectedArr[0];
 
-  const dateErrMsg = 'Format: yyyy';
-
-  const categoryList = [
-    'Cash',
-    'Debt',
-    'Investment'
-  ];
+  const amountErrMsg = 'Format: xxxx.xx, or xxxx';
+  const categoryList = ['Cash', 'Debt', 'Investment'];
   
-  useEffect(() => {
-    const yearResult = YEAR_REGEX.test(year);
-    setValidYear(yearResult);
-    const amountResult = AMOUNT_REGEX.test(amount);
-    setValidAmount(amountResult);
-  }, [year, amount]);
+  if (!addBtnIsSelected) {
+    const result = netWorthData.filter((balance) => {
+      return balance._id === selectedItemId;
+    });
+  
+    const foundBalance = result[0];
+  
+    if (foundBalance.amount < 0) {
+      foundBalance.amount *= -1;
+    }
 
-  if(!addBtnIsSelected) {
     useEffect(() => {
-      const result = netWorthData.filter((balance) => {
-        return balance._id === selectedItemId;
-      });
-
-      const foundBalance = result[0];
-
       setAccount(foundBalance.account);
       setAmount(foundBalance.amount);
-      setYear(foundBalance.year);
       setCategory(foundBalance.category);
-      setNote(foundBalance.note);
-    }, [])
+    }, []);
   }
-
 
   const handleClose = () => {
     setShowModal(false);
@@ -115,10 +98,10 @@ const NetWorthModal = ({
         BALANCES_URL + `/${selectedItemId}`,
         {
           account: account,
-          year: Number(year),
-          amount: Number(amount),
+          amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
           category: category,
-          note: note,
+          netChg: getNetChg(foundBalance.amount, Number(amount)),
+          percentChg: getPercentChg(foundBalance.amount, Number(amount))
         },
         {
           headers: { Authorization: `Bearer ${newAccessToken}` },
@@ -126,30 +109,21 @@ const NetWorthModal = ({
         },
       );
 
-     const updatedBalance = secondResponse?.data;
+      const updatedBalance = secondResponse?.data;
 
-      const updatedBalanceObj = {
-        _id: updatedBalance._id,
-        account: updatedBalance.account,
-        year: updatedBalance.year,
-        amount: updatedBalance.amount,
-        category: updatedBalance.category,
-        note: updatedBalance.note
-      }
-      
       const foundIndex = netWorthData.findIndex((item) => {
         return item._id === selectedItemId;
-      })
+      });
 
       setNetWorthData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedBalanceObj)
-        return (copyData);
+        copyData.splice(foundIndex, 1, updatedBalance);
+        return copyData;
       });
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   const handleAddBalance = async () => {
     setShowModal(false);
@@ -166,10 +140,8 @@ const NetWorthModal = ({
         BALANCES_URL + `/${auth?.userId}`,
         {
           account: account,
-          year: Number(year),
-          amount: Number(amount),
+          amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
           category: category,
-          note: note,
         },
         {
           headers: { Authorization: `Bearer ${newAccessToken}` },
@@ -181,12 +153,17 @@ const NetWorthModal = ({
 
       setNetWorthData((prevData) => {
         const copyData = [...prevData];
-        return ([...copyData, newData]);
+        return [...copyData, newData];
       });
     } catch (err) {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    const amountResult = AMOUNT_REGEX.test(amount);
+    setValidAmount(amountResult);
+  }, [amount]);
 
   return (
     <Modal open={true} onClose={handleClose}>
@@ -217,21 +194,6 @@ const NetWorthModal = ({
             onBlur={() => setAccountFocus(false)}
           ></TextField>
           <TextField
-            label="Year"
-            type="text"
-            name="year"
-            id="year"
-            autoComplete="off"
-            fullWidth
-            required
-            value={year}
-            onChange={(ev) => setYear(ev.target.value)}
-            error={yearFocus && !YEAR_REGEX.test(year) ? true : false}
-            helperText={yearFocus && !YEAR_REGEX.test(year) ? dateErrMsg : ''}
-            onFocus={() => setYearFocus(true)}
-            onBlur={() => setYearFocus(false)}
-          ></TextField>
-          <TextField
             label="Amount"
             type="text"
             name="amount"
@@ -241,9 +203,9 @@ const NetWorthModal = ({
             required
             value={amount}
             onChange={(ev) => setAmount(ev.target.value)}
-            error={amountFocus && !AMOUNT_REGEX.test(amount) ? true : false} 
+            error={amountFocus && !AMOUNT_REGEX.test(amount) ? true : false}
             helperText={
-              amountFocus && !AMOUNT_REGEX.test(amount) ? 'Enter amount' : ''
+              amountFocus && !AMOUNT_REGEX.test(amount) ? amountErrMsg : ''
             }
             onFocus={() => setAmountFocus(true)}
             onBlur={() => setAmountFocus(false)}
@@ -281,26 +243,17 @@ const NetWorthModal = ({
               <FormHelperText>Choose category</FormHelperText>
             )}
           </FormControl>
-          <TextField
-            id="outlined-multiline-static"
-            label="Note (Optional)"
-            multiline
-            fullWidth
-            rows={4}
-            value={note}
-            onChange={(ev) => setNote(ev.target.value)}
-          />
-          <Stack
-            direction={'row'}
-            spacing={2}
-            sx={{ width: '100%' }}
-          >
+          <Stack direction={'row'} spacing={2} sx={{ width: '100%' }}>
             <Button
               onClick={handleAddBalance}
               variant="contained"
               disabled={
-                validYear && validAmount && account && category && addBtnIsSelected
-                  ? false : true
+                validAmount &&
+                account &&
+                category &&
+                addBtnIsSelected
+                  ? false
+                  : true
               }
             >
               Add
@@ -309,8 +262,12 @@ const NetWorthModal = ({
               onClick={handleEditBalance}
               variant="contained"
               disabled={
-                validYear && validAmount && account && category && !addBtnIsSelected
-                  ? false : true
+                validAmount &&
+                account &&
+                category &&
+                !addBtnIsSelected
+                  ? false
+                  : true
               }
             >
               Update

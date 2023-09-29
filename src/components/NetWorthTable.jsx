@@ -11,7 +11,8 @@ import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
 import NetWorthTableHead from './NetWorthTableHead';
 import NetWorthTableToolbar from './NetWorthTableToolbar';
-import { getComparator, stableSort } from "../helpers/networthPage.helper";
+import { getComparator, stableSort } from '../helpers/networthPage.helper';
+import { formatChanges, formatAmount } from '../helpers/networthPage.helper';
 import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
@@ -76,9 +77,12 @@ export default function NetWorthTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - netWorthTableView.length) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - netWorthTableView.length)
+      : 0;
 
-  const visibleRows = useMemo(() =>
+  const visibleRows = useMemo(
+    () =>
       stableSort(netWorthTableView, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
@@ -90,7 +94,7 @@ export default function NetWorthTable() {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <NetWorthTableToolbar
-          selectedArr={selectedBalances} 
+          selectedArr={selectedBalances}
           numSelected={selectedBalances.length}
         />
         <TableContainer>
@@ -137,14 +141,46 @@ export default function NetWorthTable() {
                       id={labelId}
                       scope="row"
                       padding="none"
-                      align='left'
+                      align="left"
                     >
                       {row.account}
                     </TableCell>
-                    <TableCell align='left'>{row.year}</TableCell>
-                    <TableCell align='left'>{`$ ${row.amount.toFixed(2)}`}</TableCell>
-                    <TableCell align='left'>{row.category}</TableCell>
-                    <TableCell align='left'>{row.note}</TableCell>
+                    <TableCell align="left">
+                      {row.createdAt.slice(0, 10)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {row.updatedAt.slice(0, 10)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {`$ ${formatAmount(row.amount)}`}
+                    </TableCell>
+                    <TableCell align="left">{row.category}</TableCell>
+                    <TableCell
+                      align="left"
+                      sx={{
+                        color:
+                          (row.netChg > 0 && row.category === 'Debt') ||
+                          (row.netChg < 0 && row.category === 'Cash') ||
+                          (row.netChg < 0 && row.category === 'Investment')
+                            ? 'red'
+                            : 'green',
+                      }}
+                    >
+                      {row.netChg ? formatChanges(row.netChg) : '-'}
+                    </TableCell>
+                    <TableCell 
+                      align="left"
+                      sx={{
+                        color:
+                          (row.percentChg > 0 && row.category === 'Debt') ||
+                          (row.percentChg < 0 && row.category === 'Cash') ||
+                          (row.percentChg < 0 && row.category === 'Investment')
+                            ? 'red'
+                            : 'green',
+                      }}
+                    >
+                      {row.percentChg ? formatChanges(row.percentChg) + '%' : '-'}
+                    </TableCell>
                   </TableRow>
                 );
               })}

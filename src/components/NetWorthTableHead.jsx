@@ -29,10 +29,16 @@ const NetWorthTableHead = (props) => {
       label: 'Account',
     },
     {
-      id: 'year',
+      id: 'dateCreated',
       numeric: false,
       disablePadding: false,
-      label: 'Year',
+      label: 'Created',
+    },
+    {
+      id: 'dateUpdated',
+      numeric: false,
+      disablePadding: false,
+      label: 'Updated',
     },
     {
       id: 'amount',
@@ -48,8 +54,18 @@ const NetWorthTableHead = (props) => {
     },
   ];
 
+  const topRowArr = Array.from({ length: 6 }, () => '');
+
   return (
     <TableHead>
+      <TableRow>
+        {topRowArr.map((item, index) => (
+          <TableCell key={index}>{item}</TableCell>
+        ))}
+        <TableCell colSpan={'2'} align="center" sx={{ pb: 0 }}>
+          Since Last Update
+        </TableCell>
+      </TableRow>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
@@ -83,7 +99,8 @@ const NetWorthTableHead = (props) => {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell align="left">Note</TableCell>
+        <TableCell align="left">Net Chg </TableCell>
+        <TableCell align="left">% Chg</TableCell>
       </TableRow>
     </TableHead>
   );

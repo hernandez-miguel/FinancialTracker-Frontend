@@ -15,6 +15,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { getPieLabels, getPieData, getBarData } from '../helpers/expensesPage.helper';
 import { getMonthList, getYears, getTotal } from '../helpers/expensesPage.helper';
 import { getBackgroundColor, getBorderColor } from '../helpers/expensesPage.helper';
+import { formatAmount } from '../helpers/expensesPage.helper';
 
 const ExpensesCharts = () => {
   const [year, setYear] = useState('');
@@ -25,7 +26,7 @@ const ExpensesCharts = () => {
   const { setFilteredData } = useData();
   const { setPage } = useData();
 
-  const maxWidth = useMediaQuery('(max-width:600px)');
+  const mobileView = useMediaQuery('(max-width:600px)');
   const monthList = getMonthList();
   const yearList = getYears(expensesData);
 
@@ -51,7 +52,7 @@ const ExpensesCharts = () => {
 
   const pieChartOptions = {
     responsive: true,
-    aspectRatio: maxWidth ? 1.25 : 3.25,
+    aspectRatio: mobileView ? 1.25 : 3.25,
     plugins: {
       title: {
         display: true,
@@ -75,7 +76,7 @@ const ExpensesCharts = () => {
 
   const barChartOptions = {
     responsive: true,
-    aspectRatio: maxWidth ? 1.25 : 3.25,
+    aspectRatio: mobileView ? 1.25 : 3.25,
     plugins: {
       title: {
         display: true,
@@ -84,11 +85,17 @@ const ExpensesCharts = () => {
       },
     },
     scales: {
+      x: {
+        grid: {
+          display: false,
+          drawBorder: false,
+        }
+      },
       y: {
         ticks: {
           format: { maximumFractionDigits: 2, minimumFractionDigits: 2 },
           callback: (value, index, values) => {
-            return '$' + value;
+            return '$' + formatAmount(value);
           },
         },
       },
@@ -249,7 +256,7 @@ const ExpensesCharts = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: 2 }}>
       <Paper sx={{ width: '100%', mb: 2, p: 1.5 }}>
-        <Stack direction={'row'} justifyContent={ maxWidth ? 'center' : 'start'}>
+        <Stack direction={'row'} justifyContent={ mobileView ? 'center' : 'start'}>
           <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="year-selector-label">Year</InputLabel>
             <Select
@@ -299,7 +306,7 @@ const ExpensesCharts = () => {
               <Pie data={pieData} options={pieChartOptions} />
               <Bar data={barData} options={barChartOptions} />
               <Typography marginTop={'25px'} variant="subtitle2">
-                {`Total Expenses: $${expensesTotal.toFixed(2)}`}
+                {`Total Expenses: $${formatAmount(expensesTotal)}`}
               </Typography>
             </>
           ) : (
