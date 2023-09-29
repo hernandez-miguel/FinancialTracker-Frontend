@@ -179,7 +179,7 @@ export default function NetWorthTable() {
                             : 'green',
                       }}
                     >
-                      {row.percentChg ? formatChanges(row.percentChg) + '%' : '-'}
+                      {row.percentChg ? formatChanges(row.percentChg * 100) + '%' : '-'}
                     </TableCell>
                   </TableRow>
                 );

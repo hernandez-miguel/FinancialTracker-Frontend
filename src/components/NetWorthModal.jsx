@@ -65,7 +65,7 @@ const NetWorthModal = ({
     });
   
     const foundBalance = result[0];
-  
+
     if (foundBalance.amount < 0) {
       foundBalance.amount *= -1;
     }
@@ -85,6 +85,12 @@ const NetWorthModal = ({
   const handleEditBalance = async () => {
     setShowModal(false);
     setSelectedBalances([]);
+
+    const result = netWorthData.filter((balance) => {
+      return balance._id === selectedItemId;
+    });
+  
+    const foundBalance = result[0];
 
     try {
       const firstResponse = await axios.get(REFRESHTOKEN_URL, {

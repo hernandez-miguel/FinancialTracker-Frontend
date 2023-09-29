@@ -87,13 +87,9 @@ export function getNetChg(prevAmount, updatedAmount) {
     return '';
   }
 
-  const netChange = updatedAmount - prevAmount;
+  const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
 
-  if (netChange > 0) {
-    return '+' + netChange.toFixed(2);
-  } else {
-    return netChange.toFixed(2);
-  }
+  return netChange;
 }
 
 export function getPercentChg(prevAmount, updatedAmount) {
@@ -101,10 +97,10 @@ export function getPercentChg(prevAmount, updatedAmount) {
     return '';
   }
 
-  const netChange = updatedAmount - prevAmount;
-  const percentChg = (netChange / prevAmount) * 100;
+  const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
+  const percentChg = (netChange / prevAmount);
 
-  return percentChg.toFixed(2);
+  return Math.round(10000 * percentChg) / 10000;
 }
 
 export function getYears(arr) {
