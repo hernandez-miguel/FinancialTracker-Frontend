@@ -16,7 +16,7 @@ import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
 import { getNetChg, getPercentChg } from '../helpers/networthPage.helper';
 
-const BALANCES_URL = '/api/balances';
+const ACCOUNTS_URL = '/api/accounts';
 const REFRESHTOKEN_URL = '/refresh';
 
 const AMOUNT_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
@@ -34,18 +34,18 @@ const style = {
   pb: 3,
 };
 
-const NetWorthModal = ({
+const AccountsModal = ({
   setShowModal,
   selectedArr,
   addBtnIsSelected,
   setAddBtnIsSelected,
 }) => {
-  const { netWorthData, setNetWorthData } = useData();
-  const { setSelectedBalances } = useData();
+  const { accountsData, setAccountsData } = useData();
+  const { setSelectedAccounts } = useData();
   const { auth } = useAuth();
 
-  const [account, setAccount] = useState('');
-  const [accountFocus, setAccountFocus] = useState(false);
+  const [accountName, setAccountName] = useState('');
+  const [accountNameFocus, setAccountNameFocus] = useState(false);
 
   const [amount, setAmount] = useState('');
   const [amountFocus, setAmountFocus] = useState(false);
@@ -60,20 +60,20 @@ const NetWorthModal = ({
   const categoryList = ['Cash', 'Debt', 'Investment'];
   
   if (!addBtnIsSelected) {
-    const result = netWorthData.filter((balance) => {
+    const result = accountsData.filter((balance) => {
       return balance._id === selectedItemId;
     });
   
-    const foundBalance = result[0];
+    const foundAccount = result[0];
 
-    if (foundBalance.amount < 0) {
-      foundBalance.amount *= -1;
+    if (foundAccount.amount < 0) {
+      foundAccount.amount *= -1;
     }
 
     useEffect(() => {
-      setAccount(foundBalance.account);
-      setAmount(foundBalance.amount);
-      setCategory(foundBalance.category);
+      setAccountName(foundAccount.account);
+      setAmount(foundAccount.amount);
+      setCategory(foundAccount.category);
     }, []);
   }
 
@@ -84,13 +84,13 @@ const NetWorthModal = ({
 
   const handleEditBalance = async () => {
     setShowModal(false);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
 
-    const result = netWorthData.filter((balance) => {
+    const result = accountsData.filter((balance) => {
       return balance._id === selectedItemId;
     });
   
-    const foundBalance = result[0];
+    const foundAccount = result[0];
 
     try {
       const firstResponse = await axios.get(REFRESHTOKEN_URL, {
@@ -101,13 +101,13 @@ const NetWorthModal = ({
       const newAccessToken = firstResponse?.data?.accessToken;
 
       const secondResponse = await axios.put(
-        BALANCES_URL + `/${selectedItemId}`,
+        ACCOUNTS_URL + `/${selectedItemId}`,
         {
-          account: account,
+          account: accountName,
           amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
           category: category,
-          netChg: getNetChg(foundBalance.amount, Number(amount)),
-          percentChg: getPercentChg(foundBalance.amount, Number(amount))
+          netChg: getNetChg(foundAccount.amount, Number(amount)),
+          percentChg: getPercentChg(foundAccount.amount, Number(amount))
         },
         {
           headers: { Authorization: `Bearer ${newAccessToken}` },
@@ -115,15 +115,15 @@ const NetWorthModal = ({
         },
       );
 
-      const updatedBalance = secondResponse?.data;
+      const updateAccount = secondResponse?.data;
 
-      const foundIndex = netWorthData.findIndex((item) => {
+      const foundIndex = accountsData.findIndex((item) => {
         return item._id === selectedItemId;
       });
 
-      setNetWorthData((prevData) => {
+      setAccountsData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedBalance);
+        copyData.splice(foundIndex, 1, updateAccount);
         return copyData;
       });
     } catch (err) {
@@ -143,9 +143,9 @@ const NetWorthModal = ({
       const newAccessToken = firstResponse?.data?.accessToken;
 
       const secondResponse = await axios.post(
-        BALANCES_URL + `/${auth?.userId}`,
+        ACCOUNTS_URL + `/${auth?.userId}`,
         {
-          account: account,
+          account: accountName,
           amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
           category: category,
         },
@@ -157,7 +157,7 @@ const NetWorthModal = ({
 
       const newData = secondResponse?.data;
 
-      setNetWorthData((prevData) => {
+      setAccountsData((prevData) => {
         const copyData = [...prevData];
         return [...copyData, newData];
       });
@@ -177,11 +177,11 @@ const NetWorthModal = ({
         <Stack direction={'column'} spacing={2}>
           {addBtnIsSelected ? (
             <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Create New Balance
+              Create New Account
             </Typography>
           ) : (
             <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Update Balance
+              Update Account
             </Typography>
           )}
           <TextField
@@ -192,12 +192,12 @@ const NetWorthModal = ({
             autoComplete="off"
             fullWidth
             required
-            value={account}
-            onChange={(ev) => setAccount(ev.target.value)}
-            error={accountFocus && !account ? true : false}
-            helperText={accountFocus && !account ? 'Enter account' : ''}
-            onFocus={() => setAccountFocus(true)}
-            onBlur={() => setAccountFocus(false)}
+            value={accountName}
+            onChange={(ev) => setAccountName(ev.target.value)}
+            error={accountNameFocus && !accountName ? true : false}
+            helperText={accountNameFocus && !accountName ? 'Enter account' : ''}
+            onFocus={() => setAccountNameFocus(true)}
+            onBlur={() => setAccountNameFocus(false)}
           ></TextField>
           <TextField
             label="Amount"
@@ -255,7 +255,7 @@ const NetWorthModal = ({
               variant="contained"
               disabled={
                 validAmount &&
-                account &&
+                accountName &&
                 category &&
                 addBtnIsSelected
                   ? false
@@ -269,7 +269,7 @@ const NetWorthModal = ({
               variant="contained"
               disabled={
                 validAmount &&
-                account &&
+                accountName &&
                 category &&
                 !addBtnIsSelected
                   ? false
@@ -288,4 +288,4 @@ const NetWorthModal = ({
   );
 };
 
-export default NetWorthModal;
+export default AccountsModal;

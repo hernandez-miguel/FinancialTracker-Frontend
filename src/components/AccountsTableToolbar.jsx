@@ -9,16 +9,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
-import NetWorthModal from './NetWorthModal';
-import NetWorthDeleteDialog from './NetWorthDeleteDialog';
+import AccountsModal from './AccountsModal';
+import AccountsDeleteDialog from './AccountsDeleteDialog';
 import TextField from '@mui/material/TextField';
 import { useDebounceValue } from '../helpers/networthPage.helper';
 import { useState, useEffect } from 'react';
 import useData from '../hooks/useData.hook';
 
-const NetWorthTableToolbar = (props) => {
+const AccountsTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
-  const { netWorthData, setNetWorthTableView } = useData();
+  const { accountsData, setAccountsTableView } = useData();
   const { setPage } = useData();
   const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
@@ -36,16 +36,16 @@ const NetWorthTableToolbar = (props) => {
         }
       });
 
-      setNetWorthTableView([...foundMerchantArr]);
+      setAccountsTableView([...foundMerchantArr]);
       setPage(0);
     } else {
-      const foundAccountArr = netWorthData.filter((expense) => {
-        if (expense.account.toUpperCase().includes(searchAccount.toUpperCase())) {
+      const foundAccountArr = accountsData.filter((account) => {
+        if (account.account.toUpperCase().includes(searchAccount.toUpperCase())) {
           return true;
         }
       });
 
-      setNetWorthTableView([...foundAccountArr]);
+      setAccountsTableView([...foundAccountArr]);
       setPage(0);
     }
   }, [searchAccount])
@@ -100,7 +100,7 @@ const NetWorthTableToolbar = (props) => {
                   startIcon={<AddIcon />}
                   onClick={handleAddBtn}
                 >
-                  ADD BALANCE
+                  ADD ACCOUNT
                 </Button>
               </Grid>
               <Grid item xs={5.8} sm={2.5}>
@@ -139,7 +139,7 @@ const NetWorthTableToolbar = (props) => {
       </Toolbar>
 
       {showDeleteDialog && 
-        <NetWorthDeleteDialog
+        <AccountsDeleteDialog
           showDeleteDialog={showDeleteDialog}
           setShowDeleteDialog={setShowDeleteDialog}
           selectedArr={selectedArr}
@@ -147,7 +147,7 @@ const NetWorthTableToolbar = (props) => {
       }
 
       {showModal && 
-        <NetWorthModal
+        <AccountsModal
           addBtnIsSelected={addBtnIsSelected}
           setAddBtnIsSelected={setAddBtnIsSelected}
           setShowModal={setShowModal}
@@ -158,9 +158,9 @@ const NetWorthTableToolbar = (props) => {
   );
 }
 
-NetWorthTableToolbar.propTypes = {
+AccountsTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   selectedArr: PropTypes.array.isRequired,
 };
 
-export default NetWorthTableToolbar;
+export default AccountsTableToolbar;

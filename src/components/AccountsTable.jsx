@@ -9,17 +9,17 @@ import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Switch from '@mui/material/Switch';
-import NetWorthTableHead from './NetWorthTableHead';
-import NetWorthTableToolbar from './NetWorthTableToolbar';
+import AccountsTableToolbar from './AccountsTableToolbar';
+import AccountsTableHead from './AccountsTableHead';
 import { getComparator, stableSort } from '../helpers/networthPage.helper';
 import { formatChanges, formatAmount } from '../helpers/networthPage.helper';
 import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
-export default function NetWorthTable() {
-  const { netWorthTableView } = useData();
+export default function AccountsTable() {
+  const { accountsTableView } = useData();
   const { page, setPage } = useData();
-  const { selectedBalances, setSelectedBalances } = useData();
+  const { selectedAccounts, setSelectedAccounts } = useData();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('year');
   const [dense, setDense] = useState(false);
@@ -33,31 +33,31 @@ export default function NetWorthTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = netWorthTableView.map((n) => n._id);
-      setSelectedBalances(newSelected);
+      const newSelected = accountsTableView.map((n) => n._id);
+      setSelectedAccounts(newSelected);
       return;
     }
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selectedBalances.indexOf(name);
+    const selectedIndex = selectedAccounts.indexOf(name);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selectedBalances, name);
+      newSelected = newSelected.concat(selectedAccounts, name);
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selectedBalances.slice(1));
-    } else if (selectedIndex === selectedBalances.length - 1) {
-      newSelected = newSelected.concat(selectedBalances.slice(0, -1));
+      newSelected = newSelected.concat(selectedAccounts.slice(1));
+    } else if (selectedIndex === selectedAccounts.length - 1) {
+      newSelected = newSelected.concat(selectedAccounts.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
-        selectedBalances.slice(0, selectedIndex),
-        selectedBalances.slice(selectedIndex + 1),
+        selectedAccounts.slice(0, selectedIndex),
+        selectedAccounts.slice(selectedIndex + 1),
       );
     }
 
-    setSelectedBalances(newSelected);
+    setSelectedAccounts(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -73,29 +73,29 @@ export default function NetWorthTable() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (name) => selectedBalances.indexOf(name) !== -1;
+  const isSelected = (name) => selectedAccounts.indexOf(name) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - netWorthTableView.length)
+      ? Math.max(0, (1 + page) * rowsPerPage - accountsTableView.length)
       : 0;
 
   const visibleRows = useMemo(
     () =>
-      stableSort(netWorthTableView, getComparator(order, orderBy)).slice(
+      stableSort(accountsTableView, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage, netWorthTableView],
+    [order, orderBy, page, rowsPerPage, accountsTableView],
   );
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <NetWorthTableToolbar
-          selectedArr={selectedBalances}
-          numSelected={selectedBalances.length}
+        <AccountsTableToolbar
+          selectedArr={selectedAccounts}
+          numSelected={selectedAccounts.length}
         />
         <TableContainer>
           <Table
@@ -103,13 +103,13 @@ export default function NetWorthTable() {
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
           >
-            <NetWorthTableHead
-              numSelected={selectedBalances.length}
+            <AccountsTableHead
+              numSelected={selectedAccounts.length}
               order={order}
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={netWorthTableView.length}
+              rowCount={accountsTableView.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
@@ -199,7 +199,7 @@ export default function NetWorthTable() {
         <TablePagination
           rowsPerPageOptions={[10, 15, 25]}
           component="div"
-          count={netWorthTableView.length}
+          count={accountsTableView.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

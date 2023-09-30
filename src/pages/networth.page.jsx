@@ -1,4 +1,4 @@
-import NetWorthTable from "../components/NetworthTable";
+import AccountsTable from '../components/AccountsTable';
 import NetWorthChart from "../components/NetWorthChart";
 
 const NetWorthPage = () => {
@@ -7,7 +7,7 @@ const NetWorthPage = () => {
   return (
     <>
       <NetWorthChart />
-      <NetWorthTable />
+      <AccountsTable />
     </>
   );
 }

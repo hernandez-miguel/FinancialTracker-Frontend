@@ -7,7 +7,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import { visuallyHidden } from '@mui/utils';
 
-const NetWorthTableHead = (props) => {
+const AccountsTableHead = (props) => {
   const {
     onSelectAllClick,
     order,
@@ -106,7 +106,7 @@ const NetWorthTableHead = (props) => {
   );
 };
 
-NetWorthTableHead.propTypes = {
+AccountsTableHead.propTypes = {
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -115,4 +115,4 @@ NetWorthTableHead.propTypes = {
   rowCount: PropTypes.number.isRequired,
 };
 
-export default NetWorthTableHead;
+export default AccountsTableHead;

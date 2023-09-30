@@ -178,8 +178,8 @@ export function getBarData(arr) {
 
 export function getTotal(arr) {
   const total = arr.reduce((acc, curr) => {
-    return acc + (curr.amount * 10);
+    return (acc * 100 + curr.amount * 100) / 100;
   }, 0)
 
-  return total / 10;
+  return total;
 }

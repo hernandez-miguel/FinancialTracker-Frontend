@@ -19,10 +19,10 @@ const LOGOUT_URL = '/logout';
 
 function NavBar() {
   const { setAuth } = useAuth();
-  const { setExpensesData, setNetWorthData } = useData();
-  const { setExpensesTableView, setNetWorthTableView } = useData();
+  const { setExpensesData, setAccountsData } = useData();
+  const { setExpensesTableView, setAccountsTableView } = useData();
   const { setFilteredData } = useData();
-  const { setSelectedExpenses, setSelectedBalances } = useData();
+  const { setSelectedExpenses, setSelectedAccounts } = useData();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   
@@ -46,34 +46,34 @@ function NavBar() {
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
     setSelectedExpenses([]);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
   };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
     setSelectedExpenses([]);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
     setSelectedExpenses([]);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
     setSelectedExpenses([]);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
   };
 
   const handleLogout = async () => {
     setAuth('');
     setExpensesData([]);
-    setNetWorthData([]);
+    setAccountsData([]);
     setExpensesTableView([]);
-    setNetWorthTableView([]);
+    setAccountsTableView([]);
     setSelectedExpenses([]);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
     setFilteredData([]);
     const response = await axios.get(LOGOUT_URL);
   }

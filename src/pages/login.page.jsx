@@ -14,11 +14,11 @@ import axios from '../api/axios';
 
 const LOGIN_URL = '/auth';
 const GETEXPENSES_URL = '/api/expenses';
-const GETBALANCES_URL = '/api/balances';
+const GETACCOUNTS_URL = '/api/accounts';
 
 function LoginPage() {
   const { setAuth } = useAuth();
-  const { setExpensesData, setNetWorthData }  = useData();
+  const { setExpensesData, setAccountsData }  = useData();
   
   const navigate = useNavigate();
   const from = '/';
@@ -58,7 +58,7 @@ function LoginPage() {
       );
 
       const thirdResponse = await axios.get(
-        GETBALANCES_URL + `/${userId}`, 
+        GETACCOUNTS_URL + `/${userId}`, 
         {
           headers: { 'Authorization': `Bearer ${accessToken}` },
           withCredentials: true
@@ -66,16 +66,16 @@ function LoginPage() {
       );
         
       const expensesData = secondResponse?.data;
-      const netWorthData = thirdResponse?.data;
+      const accountsData = thirdResponse?.data;
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
         return ([...copyState, ...expensesData]);
       });
 
-      setNetWorthData((prevData) => {
+      setAccountsData((prevData) => {
         const copyState = [...prevData];
-        return ([...copyState, ...netWorthData]);
+        return ([...copyState, ...accountsData]);
       });
 
       setAuth({ userId, roles, accessToken });

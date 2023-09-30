@@ -89,7 +89,7 @@ export function getNetChg(prevAmount, updatedAmount) {
 
   const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
 
-  return netChange;
+  return Math.round(100 * netChange) / 100;
 }
 
 export function getPercentChg(prevAmount, updatedAmount) {

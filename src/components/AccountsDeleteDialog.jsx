@@ -7,16 +7,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
 
-const BALANCES_URL = '/api/balances';
+const ACCOUNT_URL = '/api/accounts';
 const REFRESHTOKEN_URL = '/refresh';
 
-const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) => {
-  const { netWorthData, setNetWorthData } = useData();
-  const { setSelectedBalances } = useData();
+const AccountsDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedArr }) => {
+  const { accountsData, setAccountsData } = useData();
+  const { setSelectedAccounts } = useData();
   const removeList = [];
 
   for(let i = 0; i < selectedArr.length; i++) {
-    const foundIndex = netWorthData.findIndex((item) => {
+    const foundIndex = accountsData.findIndex((item) => {
       return item._id === selectedArr[i];
     })
 
@@ -44,7 +44,7 @@ const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedA
 
   const handleDelete = async () => {
     setShowDeleteDialog(false);
-    setSelectedBalances([]);
+    setSelectedAccounts([]);
 
     try {
       const firstResponse = await axios.get(REFRESHTOKEN_URL, {
@@ -56,7 +56,7 @@ const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedA
       
       for(let i = 0; i < selectedArr.length; i++) {
         const secondResponse = await axios.delete(
-          BALANCES_URL + `/${selectedArr[i]}`,
+          ACCOUNT_URL + `/${selectedArr[i]}`,
           {
             headers: { Authorization: `Bearer ${newAccessToken}` },
             withCredentials: true,
@@ -64,7 +64,7 @@ const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedA
         );
       }
 
-      setNetWorthData((prevData) => {
+      setAccountsData((prevData) => {
         const copyState = [...prevData];
         const newArr = removeItemsByIndices(copyState, removeList);
         return (newArr);
@@ -102,4 +102,4 @@ const NetWorthDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedA
   );
 }
 
-export default NetWorthDeleteDialog;
+export default AccountsDeleteDialog;

@@ -15,31 +15,31 @@ import useData from '../hooks/useData.hook';
 const NetWorthChart = () => {
   const [year, setYear] = useState('');
 
-  const { netWorthData } = useData();
-  const { setNetWorthTableView } = useData();
+  const { accountsData, setFilteredData } = useData();
+  const { setAccountsTableView } = useData();
 
-  const labelsList = getBarChartLabels(netWorthData);
-  const yearList = getYears(netWorthData);
-  const arr = getBarChartData(netWorthData);
+  // const labelsList = getBarChartLabels(netWorthData);
+  const yearList = [2022, 2023];
+  const arr = [];
 
   const mobileView = useMediaQuery('(max-width:600px)');
 
   const [barData, setBarData] = useState({
-    labels: labelsList.map((year) => year),
+    labels: [2021, 2022, 2023],
     datasets: [
       {
         label: 'Debt',
-        data: arr.map((item) => item.Debt),
+        data: [500],
         backgroundColor: '#2d6a4f',
       },
       {
         label: 'Investment',
-        data: arr.map((item) => item.Investment),
+        data: [600],
         backgroundColor: '#52b788',
       },
       {
         label: 'Cash',
-        data: arr.map((item) => item.Cash),
+        data: [780],
         backgroundColor: '#b7e4c7',
       },
     ],
@@ -86,28 +86,29 @@ const NetWorthChart = () => {
   };
 
   useEffect(() => {
-    setNetWorthTableView([...netWorthData]);
+    setAccountsTableView([...accountsData]);
+    setFilteredData([]);
     setBarData({
-      labels: labelsList.map((year) => year),
+      labels: [2021, 2022, 2023],
       datasets: [
         {
           label: 'Debt',
-          data: arr.map((item) => item.Debt),
+          data: [-780],
           backgroundColor: '#2d6a4f',
         },
         {
           label: 'Investment',
-          data: arr.map((item) => item.Investment),
+          data: [600],
           backgroundColor: '#52b788',
         },
         {
           label: 'Cash',
-          data: arr.map((item) => item.Cash),
+          data: [350],
           backgroundColor: '#b7e4c7',
         },
       ],
     });
-  }, [netWorthData]);
+  }, [accountsData]);
 
   return (
     <Box sx={{ width: '100%', paddingTop: 2 }}>
