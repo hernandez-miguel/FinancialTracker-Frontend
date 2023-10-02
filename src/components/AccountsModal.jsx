@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
-import { getNetChg, getPercentChg } from '../helpers/networthPage.helper';
+import { getNetChg, getPercentChg, capitalizeFirstLetter } from '../helpers/networthPage.helper';
 
 const ACCOUNTS_URL = '/api/accounts';
 const REFRESHTOKEN_URL = '/refresh';
@@ -73,7 +73,7 @@ const AccountsModal = ({
     useEffect(() => {
       setAccountName(foundAccount.account);
       setAmount(foundAccount.amount);
-      setCategory(foundAccount.category);
+      setCategory(capitalizeFirstLetter(foundAccount.category));
     }, []);
   }
 

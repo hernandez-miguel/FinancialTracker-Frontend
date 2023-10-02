@@ -29,13 +29,13 @@ const AccountsTableHead = (props) => {
       label: 'Account',
     },
     {
-      id: 'dateCreated',
+      id: 'createdAt',
       numeric: false,
       disablePadding: false,
       label: 'Created',
     },
     {
-      id: 'dateUpdated',
+      id: 'updatedAt',
       numeric: false,
       disablePadding: false,
       label: 'Updated',

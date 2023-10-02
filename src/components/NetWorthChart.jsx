@@ -27,17 +27,17 @@ const NetWorthChart = () => {
     labels: labelsList,
     datasets: [
       {
-        label: 'Debt',
+        label: 'debt',
         data: sortedData.map((item) => item.debt),
         backgroundColor: '#2d6a4f',
       },
       {
-        label: 'Investment',
+        label: 'investment',
         data: sortedData.map((item) => item.investment),
         backgroundColor: '#52b788',
       },
       {
-        label: 'Cash',
+        label: 'cash',
         data: sortedData.map((item) => item.cash),
         backgroundColor: '#b7e4c7',
       },

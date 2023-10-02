@@ -21,7 +21,7 @@ export default function AccountsTable() {
   const { page, setPage } = useData();
   const { selectedAccounts, setSelectedAccounts } = useData();
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('year');
+  const [orderBy, setOrderBy] = useState('createdAt');
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 

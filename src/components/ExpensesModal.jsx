@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
-import { capitalizeFirstLetter } from '../helpers/expensesPage.helper';
+import { capitalizeWords } from '../helpers/expensesPage.helper';
 
 const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
@@ -91,7 +91,7 @@ const ExpensesModal = ({
       setMerchant(foundExpense.merchant);
       setAmount((foundExpense.amount).toFixed(2));
       setDate(foundExpense.date);
-      setCategory(capitalizeFirstLetter(foundExpense.category));
+      setCategory(capitalizeWords(foundExpense.category));
       setNote(foundExpense.note);
     }, [])
   }

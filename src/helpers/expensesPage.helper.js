@@ -62,8 +62,12 @@ export function formatAmount(amount) {
   return parts.join('.');
 }
 
-export function capitalizeFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+export function capitalizeWords(str) {
+  if (str.includes('/')) {
+    return str.replace(/\b\w/g, (match) => match.toUpperCase());
+  } else {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 }
 
 export function getYears(arr) {
