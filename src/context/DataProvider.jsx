@@ -5,6 +5,7 @@ const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [expensesData, setExpensesData] = useState([]);
   const [accountsData, setAccountsData] = useState([]);
+  const [balancesData, setBalancesData] = useState([]);
   const [expensesTableView, setExpensesTableView] = useState([]);
   const [accountsTableView, setAccountsTableView] = useState([]);
   const [selectedExpenses, setSelectedExpenses] = useState([]);
@@ -18,6 +19,8 @@ export const DataProvider = ({ children }) => {
       setExpensesData, 
       accountsData, 
       setAccountsData,
+      balancesData,
+      setBalancesData,
       selectedExpenses, 
       setSelectedExpenses,
       selectedAccounts,

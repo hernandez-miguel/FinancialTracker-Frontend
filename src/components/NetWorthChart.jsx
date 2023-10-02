@@ -8,38 +8,37 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getYears, getBarChartLabels, getBarChartData } from '../helpers/networthPage.helper';
-import { formatAmount } from '../helpers/networthPage.helper';
+import { getBarChartLabels, getBarChartData } from '../helpers/networthPage.helper';
+import { formatAmount, sortByYear } from '../helpers/networthPage.helper';
 import useData from '../hooks/useData.hook';
 
 const NetWorthChart = () => {
   const [year, setYear] = useState('');
-
-  const { accountsData, setFilteredData } = useData();
+  const { accountsData, balancesData } = useData();
+  const { setFilteredData } = useData();
   const { setAccountsTableView } = useData();
-
-  // const labelsList = getBarChartLabels(netWorthData);
-  const yearList = [2022, 2023];
-  const arr = [];
-
+  
   const mobileView = useMediaQuery('(max-width:600px)');
+  
+  const labelsList = getBarChartLabels(balancesData);
+  const sortedData = sortByYear(balancesData);
 
   const [barData, setBarData] = useState({
-    labels: [2021, 2022, 2023],
+    labels: labelsList,
     datasets: [
       {
         label: 'Debt',
-        data: [500],
+        data: sortedData.map((item) => item.debt),
         backgroundColor: '#2d6a4f',
       },
       {
         label: 'Investment',
-        data: [600],
+        data: sortedData.map((item) => item.investment),
         backgroundColor: '#52b788',
       },
       {
         label: 'Cash',
-        data: [780],
+        data: sortedData.map((item) => item.cash),
         backgroundColor: '#b7e4c7',
       },
     ],
@@ -88,26 +87,7 @@ const NetWorthChart = () => {
   useEffect(() => {
     setAccountsTableView([...accountsData]);
     setFilteredData([]);
-    setBarData({
-      labels: [2021, 2022, 2023],
-      datasets: [
-        {
-          label: 'Debt',
-          data: [-780],
-          backgroundColor: '#2d6a4f',
-        },
-        {
-          label: 'Investment',
-          data: [600],
-          backgroundColor: '#52b788',
-        },
-        {
-          label: 'Cash',
-          data: [350],
-          backgroundColor: '#b7e4c7',
-        },
-      ],
-    });
+    
   }, [accountsData]);
 
   return (
@@ -125,10 +105,10 @@ const NetWorthChart = () => {
             <MenuItem value="">
               <em>Show all</em>
             </MenuItem>
-            {yearList.map((year) => {
+            {sortByYear(balancesData).map((item) => {
               return (
-                <MenuItem key={year} value={year}>
-                  {year}
+                <MenuItem key={item.year} value={item.year}>
+                  {item.year}
                 </MenuItem>
               );
             })}

@@ -63,6 +63,10 @@ export function formatAmount(amount) {
   return parts.join('.');
 }
 
+export function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export function formatChanges(chg) {
   // Convert the input to a number
   const number = parseFloat(chg);
@@ -103,36 +107,13 @@ export function getPercentChg(prevAmount, updatedAmount) {
   return Math.round(10000 * percentChg) / 10000;
 }
 
-export function getYears(arr) {
-  return Object.keys(arr.reduce((acc, curr) => {
-    const { year, amount } = curr;
-    
-    if (!acc[year]) {
-      acc[year] = 0;
-    }
-
-    acc[year] += amount;
-
-    return acc;
-  }, {}))
+export function sortByYear(arr) {
+  return arr.sort((a, b) => a.year - b.year);
 }
 
 export function getBarChartLabels(arr) {
-  const years = Object.keys(arr.reduce((acc, curr) => {
-    const { year, amount } = curr;
-    
-    if (!acc[year]) {
-      acc[year] = 0;
-    }
-
-    acc[year] += amount;
-
-    return acc;
-  }, {}))
-
-  const earliestYear = Math.min(...years.map(Number));
-  const latestYear = Math.max(...years.map(Number));
-
+  const earliestYear = Math.min(...arr.map((item) => item.year));
+  const latestYear = Math.max(...arr.map((item) => item.year));
   const result = [];
 
   for (let i = earliestYear; i < latestYear; i++) {
@@ -187,7 +168,6 @@ export function getCategoryTotal(arr) {
     } else {
       acc[category] += amount;
     }
-
 
     return acc;
   }, {});

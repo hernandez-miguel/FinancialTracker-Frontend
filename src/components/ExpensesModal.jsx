@@ -14,6 +14,7 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
+import { capitalizeFirstLetter } from '../helpers/expensesPage.helper';
 
 const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
@@ -88,9 +89,9 @@ const ExpensesModal = ({
       const foundExpense = result[0];
 
       setMerchant(foundExpense.merchant);
-      setAmount(foundExpense.amount);
+      setAmount((foundExpense.amount).toFixed(2));
       setDate(foundExpense.date);
-      setCategory(foundExpense.category);
+      setCategory(capitalizeFirstLetter(foundExpense.category));
       setNote(foundExpense.note);
     }, [])
   }
@@ -125,7 +126,7 @@ const ExpensesModal = ({
           merchant: merchant,
           date: date,
           amount: Number(amount),
-          category: category,
+          category: category.toLowerCase(),
           note: note,
         },
         {
@@ -135,15 +136,6 @@ const ExpensesModal = ({
       );
 
      const updatedExpense = secondResponse?.data;
-
-      const updatedExpensesObj = {
-        _id: updatedExpense._id,
-        merchant: updatedExpense.merchant,
-        date: updatedExpense.date,
-        amount: updatedExpense.amount,
-        category: updatedExpense.category,
-        note: updatedExpense.note
-      }
       
       const foundIndex = expensesData.findIndex((item) => {
         return item._id === selectedItemId;
@@ -151,7 +143,7 @@ const ExpensesModal = ({
 
       setExpensesData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedExpensesObj)
+        copyData.splice(foundIndex, 1, updatedExpense)
         return (copyData);
       });
 
@@ -177,7 +169,7 @@ const ExpensesModal = ({
           merchant: merchant,
           date: date,
           amount: Number(amount),
-          category: category,
+          category: category.toLowerCase(),
           note: note,
         },
         {

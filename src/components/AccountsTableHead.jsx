@@ -99,8 +99,8 @@ const AccountsTableHead = (props) => {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell align="left">Net Chg </TableCell>
-        <TableCell align="left">% Chg</TableCell>
+        <TableCell align="center">Net Chg </TableCell>
+        <TableCell align="center">% Chg</TableCell>
       </TableRow>
     </TableHead>
   );

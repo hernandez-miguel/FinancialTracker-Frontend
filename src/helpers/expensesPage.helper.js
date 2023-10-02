@@ -62,6 +62,10 @@ export function formatAmount(amount) {
   return parts.join('.');
 }
 
+export function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export function getYears(arr) {
   return Object.keys(arr.reduce((acc, curr) => {
     const { date, amount } = curr;

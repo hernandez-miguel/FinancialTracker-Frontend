@@ -19,7 +19,7 @@ const LOGOUT_URL = '/logout';
 
 function NavBar() {
   const { setAuth } = useAuth();
-  const { setExpensesData, setAccountsData } = useData();
+  const { setExpensesData, setAccountsData, setBalancesData} = useData();
   const { setExpensesTableView, setAccountsTableView } = useData();
   const { setFilteredData } = useData();
   const { setSelectedExpenses, setSelectedAccounts } = useData();
@@ -70,6 +70,7 @@ function NavBar() {
     setAuth('');
     setExpensesData([]);
     setAccountsData([]);
+    setBalancesData([]);
     setExpensesTableView([]);
     setAccountsTableView([]);
     setSelectedExpenses([]);

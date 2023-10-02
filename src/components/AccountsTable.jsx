@@ -12,7 +12,7 @@ import Switch from '@mui/material/Switch';
 import AccountsTableToolbar from './AccountsTableToolbar';
 import AccountsTableHead from './AccountsTableHead';
 import { getComparator, stableSort } from '../helpers/networthPage.helper';
-import { formatChanges, formatAmount } from '../helpers/networthPage.helper';
+import { formatChanges, formatAmount, capitalizeFirstLetter } from '../helpers/networthPage.helper';
 import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
@@ -154,9 +154,9 @@ export default function AccountsTable() {
                     <TableCell align="left">
                       {`$ ${formatAmount(row.amount)}`}
                     </TableCell>
-                    <TableCell align="left">{row.category}</TableCell>
+                    <TableCell align="left">{capitalizeFirstLetter(row.category)}</TableCell>
                     <TableCell
-                      align="left"
+                      align="center"
                       sx={{
                         color:
                           (row.netChg > 0 && row.category === 'Debt') ||
@@ -169,7 +169,7 @@ export default function AccountsTable() {
                       {row.netChg ? formatChanges(row.netChg) : '-'}
                     </TableCell>
                     <TableCell 
-                      align="left"
+                      align="center"
                       sx={{
                         color:
                           (row.percentChg > 0 && row.category === 'Debt') ||

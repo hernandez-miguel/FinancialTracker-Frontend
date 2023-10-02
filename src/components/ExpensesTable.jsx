@@ -12,6 +12,7 @@ import Switch from '@mui/material/Switch';
 import ExpensesTableHead from "./ExpensesTableHead";
 import ExpensesTableToolbar from './ExpensesTableToolbar';
 import { getComparator, stableSort, formatAmount} from "../helpers/expensesPage.helper";
+import { capitalizeFirstLetter } from '../helpers/expensesPage.helper';
 import { useState, useMemo } from 'react';
 import useData from '../hooks/useData.hook';
 
@@ -145,7 +146,7 @@ export default function ExpensesTable() {
                     <TableCell align='left'>
                       {`$ ${formatAmount(row.amount)}`}
                     </TableCell>
-                    <TableCell align='left'>{row.category}</TableCell>
+                    <TableCell align='left'>{capitalizeFirstLetter(row.category)}</TableCell>
                     <TableCell align='left'>{row.note}</TableCell>
                   </TableRow>
                 );

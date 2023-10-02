@@ -15,10 +15,12 @@ import axios from '../api/axios';
 const LOGIN_URL = '/auth';
 const GETEXPENSES_URL = '/api/expenses';
 const GETACCOUNTS_URL = '/api/accounts';
+const GETBALANCES_URL = '/api/balances';
 
 function LoginPage() {
   const { setAuth } = useAuth();
   const { setExpensesData, setAccountsData }  = useData();
+  const { setBalancesData } = useData();
   
   const navigate = useNavigate();
   const from = '/';
@@ -64,9 +66,18 @@ function LoginPage() {
           withCredentials: true
         }
       );
+
+      const fourthResponse = await axios.get(
+        GETBALANCES_URL + `/${userId}`, 
+        {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+          withCredentials: true
+        }
+      );
         
       const expensesData = secondResponse?.data;
       const accountsData = thirdResponse?.data;
+      const balancesData = fourthResponse?.data;
 
       setExpensesData((prevData) => {
         const copyState = [...prevData];
@@ -76,6 +87,11 @@ function LoginPage() {
       setAccountsData((prevData) => {
         const copyState = [...prevData];
         return ([...copyState, ...accountsData]);
+      });
+
+      setBalancesData((prevData) => {
+        const copyState = [...prevData];
+        return ([...copyState, ...balancesData]);
       });
 
       setAuth({ userId, roles, accessToken });

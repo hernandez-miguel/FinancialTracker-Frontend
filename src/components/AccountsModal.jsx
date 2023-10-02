@@ -105,7 +105,7 @@ const AccountsModal = ({
         {
           account: accountName,
           amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
-          category: category,
+          category: category.toLowerCase(),
           netChg: getNetChg(foundAccount.amount, Number(amount)),
           percentChg: getPercentChg(foundAccount.amount, Number(amount))
         },
@@ -146,8 +146,8 @@ const AccountsModal = ({
         ACCOUNTS_URL + `/${auth?.userId}`,
         {
           account: accountName,
-          amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
-          category: category,
+          amount: category === 'debt' ? Number(amount) * -1 : Number(amount),
+          category: category.toLowerCase(),
         },
         {
           headers: { Authorization: `Bearer ${newAccessToken}` },
