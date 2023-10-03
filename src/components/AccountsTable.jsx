@@ -159,9 +159,9 @@ export default function AccountsTable() {
                       align="center"
                       sx={{
                         color:
-                          (row.netChg > 0 && row.category === 'Debt') ||
-                          (row.netChg < 0 && row.category === 'Cash') ||
-                          (row.netChg < 0 && row.category === 'Investment')
+                          (row.netChg > 0 && row.category === 'debt') ||
+                          (row.netChg < 0 && row.category === 'cash') ||
+                          (row.netChg < 0 && row.category === 'investment')
                             ? 'red'
                             : 'green',
                       }}
@@ -172,9 +172,9 @@ export default function AccountsTable() {
                       align="center"
                       sx={{
                         color:
-                          (row.percentChg > 0 && row.category === 'Debt') ||
-                          (row.percentChg < 0 && row.category === 'Cash') ||
-                          (row.percentChg < 0 && row.category === 'Investment')
+                          (row.percentChg > 0 && row.category === 'debt') ||
+                          (row.percentChg < 0 && row.category === 'cash') ||
+                          (row.percentChg < 0 && row.category === 'investment')
                             ? 'red'
                             : 'green',
                       }}

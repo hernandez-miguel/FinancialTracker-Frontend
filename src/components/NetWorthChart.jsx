@@ -87,7 +87,6 @@ const NetWorthChart = () => {
   useEffect(() => {
     setAccountsTableView([...accountsData]);
     setFilteredData([]);
-    
   }, [accountsData]);
 
   return (

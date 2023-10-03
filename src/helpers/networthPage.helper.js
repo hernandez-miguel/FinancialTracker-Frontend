@@ -132,7 +132,7 @@ export function getBarChartData(arr) {
     const { year, category, amount } = curr;
 
     if (!acc[year]) {
-      acc[year] = { Cash: 0, Debt: 0, Investment: 0 };
+      acc[year] = { cash: 0, debt: 0, investment: 0 };
     }
 
     acc[year][category] += amount;

@@ -66,13 +66,9 @@ const AccountsModal = ({
   
     const foundAccount = result[0];
 
-    if (foundAccount.amount < 0) {
-      foundAccount.amount *= -1;
-    }
-
     useEffect(() => {
       setAccountName(foundAccount.account);
-      setAmount(foundAccount.amount);
+      setAmount(foundAccount.amount.toFixed(2));
       setCategory(capitalizeFirstLetter(foundAccount.category));
     }, []);
   }
@@ -104,7 +100,7 @@ const AccountsModal = ({
         ACCOUNTS_URL + `/${selectedItemId}`,
         {
           account: accountName,
-          amount: category === 'Debt' ? Number(amount) * -1 : Number(amount),
+          amount: Number(amount),
           category: category.toLowerCase(),
           netChg: getNetChg(foundAccount.amount, Number(amount)),
           percentChg: getPercentChg(foundAccount.amount, Number(amount))
@@ -115,7 +111,7 @@ const AccountsModal = ({
         },
       );
 
-      const updateAccount = secondResponse?.data;
+      const updatedAccount = secondResponse?.data;
 
       const foundIndex = accountsData.findIndex((item) => {
         return item._id === selectedItemId;
@@ -123,7 +119,7 @@ const AccountsModal = ({
 
       setAccountsData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updateAccount);
+        copyData.splice(foundIndex, 1, updatedAccount);
         return copyData;
       });
     } catch (err) {
@@ -146,7 +142,7 @@ const AccountsModal = ({
         ACCOUNTS_URL + `/${auth?.userId}`,
         {
           account: accountName,
-          amount: category === 'debt' ? Number(amount) * -1 : Number(amount),
+          amount: Number(amount),
           category: category.toLowerCase(),
         },
         {
@@ -155,11 +151,11 @@ const AccountsModal = ({
         },
       );
 
-      const newData = secondResponse?.data;
+      const newAccount = secondResponse?.data;
 
       setAccountsData((prevData) => {
         const copyData = [...prevData];
-        return [...copyData, newData];
+        return [...copyData, newAccount];
       });
     } catch (err) {
       console.error(err);
