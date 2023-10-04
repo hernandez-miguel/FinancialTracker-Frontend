@@ -21,7 +21,7 @@ const NetWorthChart = () => {
   const mobileView = useMediaQuery('(max-width:600px)');
   
   const labelsList = getBarChartLabels(balancesData);
-
+  
   const [barData, setBarData] = useState({
     labels: labelsList,
     datasets: [

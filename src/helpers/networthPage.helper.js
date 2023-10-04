@@ -44,7 +44,6 @@ export function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-
 export function formatAmount(amount) {
   if (amount < 0) {
     amount *= -1;
@@ -65,6 +64,11 @@ export function formatAmount(amount) {
 
 export function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function formatBalances(firstNum, secondNum) {
+  const total = (firstNum * 100 + secondNum * 100) / 100;
+  return Math.round(100 * total) / 100;
 }
 
 export function formatChanges(chg) {

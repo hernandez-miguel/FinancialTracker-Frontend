@@ -99,7 +99,7 @@ export default function AccountsTable() {
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+            sx={{ minWidth: 800 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
           >
@@ -142,10 +142,11 @@ export default function AccountsTable() {
                       scope="row"
                       padding="none"
                       align="left"
+                      sx={{ minWidth: 125 }}
                     >
                       {row.account}
                     </TableCell>
-                    <TableCell align="left">
+                    <TableCell align="left" >
                       {row.createdAt.slice(0, 10)}
                     </TableCell>
                     <TableCell align="left">

@@ -15,7 +15,7 @@ import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
 import { getNetChg, getPercentChg } from '../helpers/networthPage.helper';
-import { capitalizeFirstLetter } from '../helpers/networthPage.helper';
+import { capitalizeFirstLetter, formatBalances } from '../helpers/networthPage.helper';
 
 const ACCOUNTS_URL = '/api/accounts';
 const BALANCES_URL = '/api/balances';
@@ -85,7 +85,7 @@ const AccountsModal = ({
     setAddBtnIsSelected(false);
   };
 
-  const handleEditAccount = async () => {
+  const handleEditButton = async () => {
     setShowModal(false);
     setSelectedAccounts([]);
 
@@ -121,22 +121,59 @@ const AccountsModal = ({
       );
 
       const updatedAccount = secondResponse?.data;
-
-      const foundIndex = accountsData.findIndex((item) => {
+      const foundAccountIndex = accountsData.findIndex((item) => {
         return item._id === selectedItemId;
       });
 
       setAccountsData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedAccount);
+        copyData.splice(foundAccountIndex, 1, updatedAccount);
         return copyData;
       });
+
+      const categoryKey = updatedAccount.category;
+      const year = Number(updatedAccount.updatedAt.slice(0, 4));
+      let netChg = updatedAccount?.netChg || 0;
+
+      if (categoryKey === 'debt') {
+        netChg *= -1;
+      }
+
+      const result = balancesData.filter((item) => item.year === year);
+      const balanceFound = result.length > 0 ? result[0] : undefined;
+      const balanceId = balanceFound?._id;
+      const cash = balanceFound?.cash || 0;
+      const debt = balanceFound?.debt || 0;
+      const investment = balanceFound?.investment || 0;
+
+      const thirdResponse = await axios.put(
+        BALANCES_URL + `/${balanceId}`,
+        {
+          year: year,
+          cash: categoryKey === 'cash' ? formatBalances(cash, netChg) : cash,
+          debt: categoryKey === 'debt' ? formatBalances(debt, netChg) : debt,
+          investment: categoryKey === 'investment' ? formatBalances(investment, netChg) : investment
+        },
+        {
+          headers: { Authorization: `Bearer ${newAccessToken}` },
+          withCredentials: true,
+        },
+      );
+
+      const updatedBalance = thirdResponse?.data;
+      const foundBalanceIndex = balancesData.findIndex(item => item.year === year);
+
+      setBalancesData((prevData) => {
+        const copyState = [...prevData];
+        copyState.splice(foundBalanceIndex, 1, updatedBalance);
+        return copyState;
+      })
     } catch (err) {
       console.error(err);
     }
   };
 
-  const handleAddAccount = async () => {
+  const handleAddButton = async () => {
     setShowModal(false);
 
     try {
@@ -174,7 +211,8 @@ const AccountsModal = ({
       const result = balancesData.filter((item) => item.year === year);
       const balanceFound = result.length > 0 ? result[0] : undefined;
       const balanceId = balanceFound?._id;
-      const hasNoBalance = balanceFound?.[newAccount.category] === 0;
+      const hasBalance = balanceFound?.[newAccount.category] > 0 || 
+        balanceFound?.[newAccount.category] < 0;
       const cash = balanceFound?.cash || 0;
       const debt = balanceFound?.debt || 0;
       const investment = balanceFound?.investment || 0;
@@ -200,7 +238,7 @@ const AccountsModal = ({
           const copyData = [...prevData];
           return [...copyData, newBalance];
         });
-      } else if (result.length > 0 && hasNoBalance) {
+      } else if (result.length > 0 && !hasBalance) {
         const fourthResponse = await axios.put(
           BALANCES_URL + `/${balanceId}`,
           {
@@ -216,26 +254,50 @@ const AccountsModal = ({
         );
   
         const updatedBalance = fourthResponse?.data;
-  
-        const foundIndex = balancesData.findIndex((item) => {
+        const foundBalanceIndex = balancesData.findIndex((item) => {
           return item._id === balanceId;
         });
   
         setBalancesData((prevData) => {
           const copyData = [...prevData];
-          copyData.splice(foundIndex, 1, updatedBalance);
+          copyData.splice(foundBalanceIndex, 1, updatedBalance);
+          return copyData;
+        });
+      } else if (result.length > 0 && hasBalance) { 
+        const fifthResponse = await axios.put(
+          BALANCES_URL + `/${balanceId}`,
+          {
+            year: year,
+            cash: categoryKey === 'cash' ? formatBalances(cash, newAccount.balance) : cash,
+            debt: categoryKey === 'debt' ? formatBalances(debt, newAccount.balance) : debt,
+            investment: categoryKey === 'investment' ? 
+              formatBalances(investment, newAccount.balance) : investment
+          },
+          {
+            headers: { Authorization: `Bearer ${newAccessToken}` },
+            withCredentials: true,
+          },
+        );
+
+        const updatedBalance = fifthResponse?.data;
+        const foundBalanceIndex = balancesData.findIndex((item) => {
+          return item._id === balanceId;
+        });
+
+        setBalancesData((prevData) => {
+          const copyData = [...prevData];
+          copyData.splice(foundBalanceIndex, 1, updatedBalance);
           return copyData;
         });
       }
-
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    const amountResult = BALANCE_REGEX.test(balance);
-    setValidBalance(amountResult);
+    const balanceResult = BALANCE_REGEX.test(balance);
+    setValidBalance(balanceResult);
   }, [balance]);
 
   return (
@@ -318,7 +380,7 @@ const AccountsModal = ({
           </FormControl>
           <Stack direction={'row'} spacing={2} sx={{ width: '100%' }}>
             <Button
-              onClick={handleAddAccount}
+              onClick={handleAddButton}
               variant="contained"
               disabled={
                 validBalance &&
@@ -332,7 +394,7 @@ const AccountsModal = ({
               Add
             </Button>
             <Button
-              onClick={handleEditAccount}
+              onClick={handleEditButton}
               variant="contained"
               disabled={
                 validBalance &&
