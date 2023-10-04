@@ -121,7 +121,6 @@ const AccountsModal = ({
       );
 
       const updatedAccount = secondResponse?.data;
-      console.log(updatedAccount);
 
       const foundIndex = accountsData.findIndex((item) => {
         return item._id === selectedItemId;
