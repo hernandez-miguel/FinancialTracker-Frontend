@@ -41,10 +41,10 @@ const AccountsTableHead = (props) => {
       label: 'Updated',
     },
     {
-      id: 'amount',
+      id: 'balance',
       numeric: false,
       disablePadding: false,
-      label: 'Amount',
+      label: 'Balance',
     },
     {
       id: 'category',
@@ -52,20 +52,28 @@ const AccountsTableHead = (props) => {
       disablePadding: false,
       label: 'Category',
     },
+    {
+      id: 'prevBalance',
+      numeric: false,
+      disablePadding: false,
+      label: 'Prev. Balance',
+    },
+    {
+      id: 'netChg',
+      numeric: false,
+      disablePadding: false,
+      label: 'Net Chg',
+    },
+    {
+      id: 'percentChg',
+      numeric: false,
+      disablePadding: false,
+      label: '% Chg',
+    },
   ];
-
-  const topRowArr = Array.from({ length: 6 }, () => '');
 
   return (
     <TableHead>
-      <TableRow>
-        {topRowArr.map((item, index) => (
-          <TableCell key={index}>{item}</TableCell>
-        ))}
-        <TableCell colSpan={'2'} align="center" sx={{ pb: 0 }}>
-          Since Last Update
-        </TableCell>
-      </TableRow>
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
@@ -99,8 +107,6 @@ const AccountsTableHead = (props) => {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell align="center">Net Chg </TableCell>
-        <TableCell align="center">% Chg</TableCell>
       </TableRow>
     </TableHead>
   );

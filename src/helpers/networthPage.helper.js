@@ -91,8 +91,12 @@ export function getNetChg(prevAmount, updatedAmount) {
     return '';
   }
 
-  const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
+  if(updatedAmount < 0) {
+    updatedAmount *= -1;
+  }
 
+  const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
+  
   return Math.round(100 * netChange) / 100;
 }
 

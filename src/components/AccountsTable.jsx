@@ -152,11 +152,14 @@ export default function AccountsTable() {
                       {row.updatedAt.slice(0, 10)}
                     </TableCell>
                     <TableCell align="left">
-                      {`$ ${formatAmount(row.amount)}`}
+                      {`$ ${formatAmount(row.balance)}`}
                     </TableCell>
                     <TableCell align="left">{capitalizeFirstLetter(row.category)}</TableCell>
+                    <TableCell align="left">
+                      {row.prevBalance ? `$ ${formatAmount(row.prevBalance)}` : '-'}
+                    </TableCell>
                     <TableCell
-                      align="center"
+                      align="left"
                       sx={{
                         color:
                           (row.netChg > 0 && row.category === 'debt') ||
@@ -169,7 +172,7 @@ export default function AccountsTable() {
                       {row.netChg ? formatChanges(row.netChg) : '-'}
                     </TableCell>
                     <TableCell 
-                      align="center"
+                      align="left"
                       sx={{
                         color:
                           (row.percentChg > 0 && row.category === 'debt') ||

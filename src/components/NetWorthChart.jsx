@@ -21,24 +21,23 @@ const NetWorthChart = () => {
   const mobileView = useMediaQuery('(max-width:600px)');
   
   const labelsList = getBarChartLabels(balancesData);
-  const sortedData = sortByYear(balancesData);
 
   const [barData, setBarData] = useState({
     labels: labelsList,
     datasets: [
       {
         label: 'debt',
-        data: sortedData.map((item) => item.debt),
+        data: sortByYear(balancesData).map((item) => item.debt),
         backgroundColor: '#2d6a4f',
       },
       {
         label: 'investment',
-        data: sortedData.map((item) => item.investment),
+        data: sortByYear(balancesData).map((item) => item.investment),
         backgroundColor: '#52b788',
       },
       {
         label: 'cash',
-        data: sortedData.map((item) => item.cash),
+        data: sortByYear(balancesData).map((item) => item.cash),
         backgroundColor: '#b7e4c7',
       },
     ],
@@ -87,7 +86,27 @@ const NetWorthChart = () => {
   useEffect(() => {
     setAccountsTableView([...accountsData]);
     setFilteredData([]);
-  }, [accountsData]);
+    setBarData({
+      labels: labelsList,
+      datasets: [
+        {
+          label: 'debt',
+          data: sortByYear(balancesData).map((item) => item.debt),
+          backgroundColor: '#2d6a4f',
+        },
+        {
+          label: 'investment',
+          data: sortByYear(balancesData).map((item) => item.investment),
+          backgroundColor: '#52b788',
+        },
+        {
+          label: 'cash',
+          data: sortByYear(balancesData).map((item) => item.cash),
+          backgroundColor: '#b7e4c7',
+        },
+      ],
+    });
+  }, [accountsData, balancesData]);
 
   return (
     <Box sx={{ width: '100%', paddingTop: 2 }}>
