@@ -1,88 +1,31 @@
 import { useEffect, useState } from "react";
 
-export function useDebounceValue(value, time) {
-  const [debounceValue, setDebounceValue] = useState(value);
+export const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDebounceValue(value);
-    }, time)
-
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [value, time]);
-
-  return debounceValue;
-}
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-export function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-export function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-export function formatAmount(amount) {
-  if (amount < 0) {
-    amount *= -1;
-  }
-
-  // Convert the number to a string
-  amount = amount.toFixed(2);
-  
-  // Split the string into integer and decimal parts (if any)
-  let parts = amount.split('.');
-  
-  // Add commas to the integer part
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  
-  // Join the integer and decimal parts (if any) and return
-  return parts.join('.');
-}
-
-export function capitalizeWords(str) {
-  if (str.includes('/')) {
-    return str.replace(/\b\w/g, (match) => match.toUpperCase());
-  } else {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-}
-
-export function getYears(arr) {
-  return Object.keys(arr.reduce((acc, curr) => {
-    const { date, amount } = curr;
-    
-    if (!acc[date.slice(0, 4)]) {
-      acc[date.slice(0, 4)] = 0;
-    }
-
-    acc[date.slice(0, 4)] += amount;
-
-    return acc;
-  }, {}))
-}
+export const categoryList = [
+  'Dining out',
+  'Entertainment',
+  'Groceries',
+  'Insurance',
+  'Materials/Supplies',
+  'Mortgage/Rent',
+  'Shopping',
+  'Taxes',
+  'Transportation',
+  'Utility',
+  'Other',
+];
 
 export function getMonthList() {
   const months = [
@@ -133,6 +76,86 @@ export function getBorderColor() {
   ]
 
   return arr;
+}
+
+export function useDebounceValue(value, time) {
+  const [debounceValue, setDebounceValue] = useState(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceValue(value);
+    }, time)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [value, time]);
+
+  return debounceValue;
+}
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+export function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+export function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+
+export function formatAmount(amount) {
+  // Convert the number to a string
+  amount = amount.toFixed(2);
+  
+  // Split the string into integer and decimal parts (if any)
+  let parts = amount.split('.');
+  
+  // Add commas to the integer part
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  
+  // Join the integer and decimal parts (if any) and return
+  return parts.join('.');
+}
+
+export function capitalizeWords(str) {
+  if (str.includes('/')) {
+    return str.replace(/\b\w/g, (match) => match.toUpperCase());
+  } else {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+}
+
+export function getYears(arr) {
+  return Object.keys(arr.reduce((acc, curr) => {
+    const { date, amount } = curr;
+    
+    if (!acc[date.slice(0, 4)]) {
+      acc[date.slice(0, 4)] = 0;
+    }
+
+    acc[date.slice(0, 4)] += amount;
+
+    return acc;
+  }, {}))
 }
 
 export function getPieLabels(arr) {

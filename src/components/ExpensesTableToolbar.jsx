@@ -9,7 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
-import ExpensesModal from './ExpensesModal';
+import AddExpenseModal from './AddExpenseModal';
+import UpdateExpenseModal from './UpdateExpenseModal';
 import ExpensesDeleteDialog from './ExpensesDeleteDialog';
 import TextField from '@mui/material/TextField';
 import { useDebounceValue } from '../helpers/expensesPage.helper';
@@ -22,8 +23,8 @@ const ExpensesTableToolbar = (props) => {
   const { setPage } = useData();
   const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
-  const [addBtnIsSelected, setAddBtnIsSelected] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const searchMerchant = useDebounceValue(debounceValue, 350); 
@@ -51,12 +52,11 @@ const ExpensesTableToolbar = (props) => {
   }, [searchMerchant])
 
   const handleEditBtn = () => {
-    setShowModal(true);
+    setShowUpdateModal(true);
   }
 
   const handleAddBtn = () => {
-    setAddBtnIsSelected(true);
-    setShowModal(true);
+    setShowAddModal(true);
   }
 
   const handleDeleteBtn = () => {
@@ -146,11 +146,15 @@ const ExpensesTableToolbar = (props) => {
         />
       }
 
-      {showModal && 
-        <ExpensesModal 
-          addBtnIsSelected={addBtnIsSelected}
-          setAddBtnIsSelected={setAddBtnIsSelected}
-          setShowModal={setShowModal}
+      {showAddModal && 
+        <AddExpenseModal 
+          setShowModal={setShowAddModal}
+        />
+      }
+
+      {showUpdateModal && 
+        <UpdateExpenseModal
+          setShowModal={setShowUpdateModal}
           selectedArr={selectedArr}
         />
       }

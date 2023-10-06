@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
-import { capitalizeWords, modalStyle } from '../helpers/expensesPage.helper';
+import { modalStyle, categoryList} from '../helpers/expensesPage.helper';
 
 const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
@@ -22,14 +22,8 @@ const REFRESHTOKEN_URL = '/refresh';
 const DATE_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
 const AMOUNT_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
 
-const ExpensesModal = ({
-  setShowModal,
-  selectedArr,
-  addBtnIsSelected,
-  setAddBtnIsSelected,
-}) => {
-  const { expensesData, setExpensesData } = useData();
-  const { setSelectedExpenses } = useData();
+const AddExpenseModal = ({ setShowModal }) => {
+  const { setExpensesData } = useData();
   const { auth } = useAuth();
 
   const [merchant, setMerchant] = useState('');
@@ -48,40 +42,8 @@ const ExpensesModal = ({
 
   const [note, setNote] = useState('');
 
-  const selectedItemId = selectedArr[0];
-
   const dateErrMsg = 'Format: yyyy-mm-dd';
   const amountErrMsg = 'Format: xxxx.xx, or xxxx';
-
-  const categoryList = [
-    'Dining out',
-    'Entertainment',
-    'Groceries',
-    'Insurance',
-    'Materials/Supplies',
-    'Mortgage/Rent',
-    'Shopping',
-    'Taxes',
-    'Transportation',
-    'Utility',
-    'Other',
-  ];
-
-  if(!addBtnIsSelected) {
-    useEffect(() => {
-      const result = expensesData.filter((expense) => {
-        return expense._id === selectedItemId;
-      });
-
-      const foundExpense = result[0];
-
-      setMerchant(foundExpense.merchant);
-      setAmount((foundExpense.amount).toFixed(2));
-      setDate(foundExpense.date);
-      setCategory(capitalizeWords(foundExpense.category));
-      setNote(foundExpense.note);
-    }, [])
-  }
 
   useEffect(() => {
     const dateResult = DATE_REGEX.test(date);
@@ -92,52 +54,7 @@ const ExpensesModal = ({
 
   const handleClose = () => {
     setShowModal(false);
-    setAddBtnIsSelected(false);
   };
-
-  const handleEditExpense = async () => {
-    setShowModal(false);
-    setSelectedExpenses([]);
-
-    try {
-      const firstResponse = await axios.get(REFRESHTOKEN_URL, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-
-      const newAccessToken = firstResponse?.data?.accessToken;
-
-      const secondResponse = await axios.put(
-        EXPENSES_URL + `/${selectedItemId}`,
-        {
-          merchant: merchant,
-          date: date,
-          amount: Number(amount),
-          category: category.toLowerCase(),
-          note: note,
-        },
-        {
-          headers: { Authorization: `Bearer ${newAccessToken}` },
-          withCredentials: true,
-        },
-      );
-
-     const updatedExpense = secondResponse?.data;
-      
-      const foundIndex = expensesData.findIndex((item) => {
-        return item._id === selectedItemId;
-      })
-
-      setExpensesData((prevData) => {
-        const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedExpense)
-        return (copyData);
-      });
-
-    } catch (err) {
-      console.error(err);
-    }
-  }
 
   const handleAddExpense = async () => {
     setShowModal(false);
@@ -180,15 +97,9 @@ const ExpensesModal = ({
     <Modal open={true} onClose={handleClose}>
       <Box sx={{ ...modalStyle, width: 300, borderRadius: '10px' }}>
         <Stack direction={'column'} spacing={2}>
-          {addBtnIsSelected ? (
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Create New Expense
-            </Typography>
-          ) : (
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Update Expense
-            </Typography>
-          )}
+          <Typography sx={{ margin: '0 auto' }} variant="h6">
+            Create New Expense
+          </Typography>
           <TextField
             label="Merchant"
             type="text"
@@ -280,30 +191,26 @@ const ExpensesModal = ({
           />
           <Stack
             direction={'row'}
-            spacing={2}
+            justifyContent={'space-between'}
             sx={{ width: '100%' }}
           >
             <Button
               onClick={handleAddExpense}
+              sx={{ width: '45%' }}
               variant="contained"
               disabled={
-                validDate && validAmount && merchant && category && addBtnIsSelected
+                validDate && validAmount 
+                && merchant && category 
                   ? false : true
               }
             >
               Add
             </Button>
-            <Button
-              onClick={handleEditExpense}
+            <Button 
+              onClick={handleClose} 
               variant="contained"
-              disabled={
-                validDate && validAmount && merchant && category && !addBtnIsSelected
-                  ? false : true
-              }
+              sx={{ width: '45%' }}
             >
-              Update
-            </Button>
-            <Button onClick={handleClose} variant="contained">
               Close
             </Button>
           </Stack>
@@ -313,4 +220,4 @@ const ExpensesModal = ({
   );
 };
 
-export default ExpensesModal;
+export default AddExpenseModal;

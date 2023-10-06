@@ -12,9 +12,9 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
-import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
 import { capitalizeWords, modalStyle } from '../helpers/expensesPage.helper';
+import { categoryList } from '../helpers/expensesPage.helper';
 
 const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
@@ -22,15 +22,9 @@ const REFRESHTOKEN_URL = '/refresh';
 const DATE_REGEX = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
 const AMOUNT_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
 
-const ExpensesModal = ({
-  setShowModal,
-  selectedArr,
-  addBtnIsSelected,
-  setAddBtnIsSelected,
-}) => {
+const UpdateExpenseModal = ({ setShowModal, selectedArr }) => {
   const { expensesData, setExpensesData } = useData();
   const { setSelectedExpenses } = useData();
-  const { auth } = useAuth();
 
   const [merchant, setMerchant] = useState('');
   const [merchantFocus, setMerchantFocus] = useState(false);
@@ -48,51 +42,30 @@ const ExpensesModal = ({
 
   const [note, setNote] = useState('');
 
-  const selectedItemId = selectedArr[0];
-
   const dateErrMsg = 'Format: yyyy-mm-dd';
   const amountErrMsg = 'Format: xxxx.xx, or xxxx';
 
-  const categoryList = [
-    'Dining out',
-    'Entertainment',
-    'Groceries',
-    'Insurance',
-    'Materials/Supplies',
-    'Mortgage/Rent',
-    'Shopping',
-    'Taxes',
-    'Transportation',
-    'Utility',
-    'Other',
-  ];
+  const selectedItemId = selectedArr[0];
 
-  if(!addBtnIsSelected) {
-    useEffect(() => {
-      const result = expensesData.filter((expense) => {
-        return expense._id === selectedItemId;
-      });
+  const result = expensesData.filter((expense) => {
+    return expense._id === selectedItemId;
+  });
 
-      const foundExpense = result[0];
+  const foundExpense = result[0];
 
-      setMerchant(foundExpense.merchant);
-      setAmount((foundExpense.amount).toFixed(2));
-      setDate(foundExpense.date);
-      setCategory(capitalizeWords(foundExpense.category));
-      setNote(foundExpense.note);
-    }, [])
+  function compareBalances(str1, str2) {
+    const num1 = parseFloat(str1);
+    const num2 = parseFloat(str2);
+    return num1 === num2;
   }
 
-  useEffect(() => {
-    const dateResult = DATE_REGEX.test(date);
-    setValidDate(dateResult);
-    const amountResult = AMOUNT_REGEX.test(amount);
-    setValidAmount(amountResult);
-  }, [date, amount]);
+  const isSameName = foundExpense.merchant === merchant;
+  const isSameAmount = compareBalances(foundExpense.amount, amount);
+  const isSameDate = foundExpense.date === date;
+  const isSameCategory = foundExpense.category === category.toLowerCase();
 
   const handleClose = () => {
     setShowModal(false);
-    setAddBtnIsSelected(false);
   };
 
   const handleEditExpense = async () => {
@@ -122,73 +95,44 @@ const ExpensesModal = ({
         },
       );
 
-     const updatedExpense = secondResponse?.data;
-      
+      const updatedExpense = secondResponse?.data;
+
       const foundIndex = expensesData.findIndex((item) => {
         return item._id === selectedItemId;
-      })
+      });
 
       setExpensesData((prevData) => {
         const copyData = [...prevData];
-        copyData.splice(foundIndex, 1, updatedExpense)
-        return (copyData);
-      });
-
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  const handleAddExpense = async () => {
-    setShowModal(false);
-
-    try {
-      const firstResponse = await axios.get(REFRESHTOKEN_URL, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-
-      const newAccessToken = firstResponse?.data?.accessToken;
-
-      const secondResponse = await axios.post(
-        EXPENSES_URL + `/${auth?.userId}`,
-        {
-          merchant: merchant,
-          date: date,
-          amount: Number(amount),
-          category: category.toLowerCase(),
-          note: note,
-        },
-        {
-          headers: { Authorization: `Bearer ${newAccessToken}` },
-          withCredentials: true,
-        },
-      );
-
-      const newData = secondResponse?.data;
-
-      setExpensesData((prevData) => {
-        const copyData = [...prevData];
-        return [...copyData, newData];
+        copyData.splice(foundIndex, 1, updatedExpense);
+        return copyData;
       });
     } catch (err) {
       console.error(err);
     }
   };
 
+  useEffect(() => {
+    setMerchant(foundExpense.merchant);
+    setAmount(foundExpense.amount.toFixed(2));
+    setDate(foundExpense.date);
+    setCategory(capitalizeWords(foundExpense.category));
+    setNote(foundExpense.note);
+  }, []);
+
+  useEffect(() => {
+    const dateResult = DATE_REGEX.test(date);
+    setValidDate(dateResult);
+    const amountResult = AMOUNT_REGEX.test(amount);
+    setValidAmount(amountResult);
+  }, [date, amount, date, category]);
+
   return (
     <Modal open={true} onClose={handleClose}>
       <Box sx={{ ...modalStyle, width: 300, borderRadius: '10px' }}>
         <Stack direction={'column'} spacing={2}>
-          {addBtnIsSelected ? (
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Create New Expense
-            </Typography>
-          ) : (
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Update Expense
-            </Typography>
-          )}
+          <Typography sx={{ margin: '0 auto' }} variant="h6">
+            Update Expense
+          </Typography>
           <TextField
             label="Merchant"
             type="text"
@@ -229,7 +173,7 @@ const ExpensesModal = ({
             required
             value={amount}
             onChange={(ev) => setAmount(ev.target.value)}
-            error={amountFocus && !AMOUNT_REGEX.test(amount) ? true : false} 
+            error={amountFocus && !AMOUNT_REGEX.test(amount) ? true : false}
             helperText={
               amountFocus && !AMOUNT_REGEX.test(amount) ? amountErrMsg : ''
             }
@@ -254,9 +198,6 @@ const ExpensesModal = ({
               onFocus={() => setCategoryFocus(true)}
               onBlur={() => setCategoryFocus(false)}
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
               {categoryList.map((item, index) => {
                 return (
                   <MenuItem key={index} value={item}>
@@ -280,30 +221,33 @@ const ExpensesModal = ({
           />
           <Stack
             direction={'row'}
-            spacing={2}
+            justifyContent={'space-between'}
             sx={{ width: '100%' }}
           >
             <Button
-              onClick={handleAddExpense}
-              variant="contained"
-              disabled={
-                validDate && validAmount && merchant && category && addBtnIsSelected
-                  ? false : true
-              }
-            >
-              Add
-            </Button>
-            <Button
               onClick={handleEditExpense}
               variant="contained"
+              sx={{ width: '45%' }}
               disabled={
-                validDate && validAmount && merchant && category && !addBtnIsSelected
-                  ? false : true
+                validDate &&
+                validAmount &&
+                merchant &&
+                category &&
+                (
+                  !isSameName || !isSameAmount 
+                  || !isSameDate || !isSameCategory
+                )
+                  ? false
+                  : true
               }
             >
               Update
             </Button>
-            <Button onClick={handleClose} variant="contained">
+            <Button
+              onClick={handleClose}
+              variant="contained"
+              sx={{ width: '45%' }}
+            >
               Close
             </Button>
           </Stack>
@@ -313,4 +257,4 @@ const ExpensesModal = ({
   );
 };
 
-export default ExpensesModal;
+export default UpdateExpenseModal;

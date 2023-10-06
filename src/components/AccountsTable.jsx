@@ -99,7 +99,7 @@ export default function AccountsTable() {
         />
         <TableContainer>
           <Table
-            sx={{ minWidth: 800 }}
+            sx={{ minWidth: 1000 }}
             aria-labelledby="tableTitle"
             size={dense ? 'small' : 'medium'}
           >
