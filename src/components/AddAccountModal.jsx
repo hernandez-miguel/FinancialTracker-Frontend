@@ -14,8 +14,8 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
-import { getNetChg, getPercentChg, modalStyle } from '../helpers/networthPage.helper';
-import { capitalizeFirstLetter, formatBalances } from '../helpers/networthPage.helper';
+import { modalStyle } from '../helpers/networthPage.helper';
+import { formatBalances } from '../helpers/networthPage.helper';
 
 const ACCOUNTS_URL = '/api/accounts';
 const BALANCES_URL = '/api/balances';
@@ -23,15 +23,9 @@ const REFRESHTOKEN_URL = '/refresh';
 
 const BALANCE_REGEX = /^(?:\d{1,}|\d+\.\d{2})$/;
 
-const AccountsModal = ({
-  setShowModal,
-  selectedArr,
-  addBtnIsSelected,
-  setAddBtnIsSelected,
-}) => {
-  const { accountsData, setAccountsData } = useData();
+const AddAccountModal = ({ setShowModal }) => {
+  const { setAccountsData } = useData();
   const { balancesData, setBalancesData } = useData();
-  const { setSelectedAccounts } = useData();
   const { auth } = useAuth();
 
   const [accountName, setAccountName] = useState('');
@@ -44,121 +38,11 @@ const AccountsModal = ({
   const [category, setCategory] = useState('');
   const [categoryFocus, setCategoryFocus] = useState(false);
 
-  const selectedItemId = selectedArr[0];
-
   const balanceErrMsg = 'Format: xxxx.xx, or xxxx';
   const categoryList = ['Cash', 'Debt', 'Investment'];
-  
-  if (!addBtnIsSelected) {
-    const result = accountsData.filter((balance) => {
-      return balance._id === selectedItemId;
-    });
-  
-    const foundAccount = result[0];
-
-    if(foundAccount.balance < 0) {
-      foundAccount.balance *= -1;
-    }
-
-    useEffect(() => {
-      setAccountName(foundAccount.account);
-      setBalance(foundAccount.balance.toFixed(2));
-      setCategory(capitalizeFirstLetter(foundAccount.category));
-    }, []);
-  }
 
   const handleClose = () => {
     setShowModal(false);
-    setAddBtnIsSelected(false);
-  };
-
-  const handleEditButton = async () => {
-    setShowModal(false);
-    setSelectedAccounts([]);
-
-    const result = accountsData.filter((account) => {
-      return account._id === selectedItemId;
-    });
-  
-    const foundAccount = result[0];
-
-    try {
-      const firstResponse = await axios.get(REFRESHTOKEN_URL, {
-        headers: { 'Content-Type': 'application/json' },
-        withCredentials: true,
-      });
-
-      const newAccessToken = firstResponse?.data?.accessToken;
-
-      const secondResponse = await axios.put(
-        ACCOUNTS_URL + `/${selectedItemId}`,
-        {
-          account: accountName,
-          balance: category.toLowerCase() === 'debt' ?
-            Number(balance) * -1 : Number(balance),
-          category: category.toLowerCase(),
-          prevBalance: foundAccount.balance,
-          netChg: getNetChg(foundAccount.balance, Number(balance)),
-          percentChg: getPercentChg(foundAccount.balance, Number(balance))
-        },
-        {
-          headers: { Authorization: `Bearer ${newAccessToken}` },
-          withCredentials: true,
-        },
-      );
-
-      const updatedAccount = secondResponse?.data;
-      const foundAccountIndex = accountsData.findIndex((item) => {
-        return item._id === selectedItemId;
-      });
-
-      setAccountsData((prevData) => {
-        const copyData = [...prevData];
-        copyData.splice(foundAccountIndex, 1, updatedAccount);
-        return copyData;
-      });
-
-      const categoryKey = updatedAccount.category;
-      const year = Number(updatedAccount.updatedAt.slice(0, 4));
-      let netChg = updatedAccount?.netChg || 0;
-
-      if (categoryKey === 'debt') {
-        netChg *= -1;
-      }
-
-      const result = balancesData.filter((item) => item.year === year);
-      const balanceFound = result.length > 0 ? result[0] : undefined;
-      const balanceId = balanceFound?._id;
-      const cash = balanceFound?.cash || 0;
-      const debt = balanceFound?.debt || 0;
-      const investment = balanceFound?.investment || 0;
-
-      const thirdResponse = await axios.put(
-        BALANCES_URL + `/${balanceId}`,
-        {
-          year: year,
-          cash: categoryKey === 'cash' ? formatBalances(cash, netChg) : cash,
-          debt: categoryKey === 'debt' ? formatBalances(debt, netChg) : debt,
-          investment: categoryKey === 'investment' ? formatBalances(investment, netChg) : investment
-        },
-        {
-          headers: { Authorization: `Bearer ${newAccessToken}` },
-          withCredentials: true,
-        },
-      );
-
-      const updatedBalance = thirdResponse?.data;
-      console.log(updatedAccount);
-      const foundBalanceIndex = balancesData.findIndex(item => item.year === year);
-
-      setBalancesData((prevData) => {
-        const copyState = [...prevData];
-        copyState.splice(foundBalanceIndex, 1, updatedBalance);
-        return copyState;
-      })
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const handleAddButton = async () => {
@@ -176,8 +60,7 @@ const AccountsModal = ({
         ACCOUNTS_URL + `/${auth?.userId}`,
         {
           account: accountName,
-          balance: category.toLowerCase() === 'debt' ? 
-            Number(balance) * -1 : Number(balance),
+          balance: Number(balance),
           category: category.toLowerCase(),
         },
         {
@@ -211,7 +94,7 @@ const AccountsModal = ({
           {
             year: year,
             cash: categoryKey === 'cash' ? newAccount.balance : 0,
-            debt: categoryKey === 'debt' ? newAccount.balance : 0,
+            debt: categoryKey === 'debt' ? newAccount.balance * -1 : 0,
             investment: categoryKey === 'investment' ? newAccount.balance : 0
           },
           {
@@ -232,7 +115,7 @@ const AccountsModal = ({
           {
             year: year,
             cash: categoryKey === 'cash' ? newAccount.balance : cash,
-            debt: categoryKey === 'debt' ? newAccount.balance : debt,
+            debt: categoryKey === 'debt' ? newAccount.balance * -1 : debt,
             investment: categoryKey === 'investment' ? newAccount.balance : investment
           },
           {
@@ -257,7 +140,7 @@ const AccountsModal = ({
           {
             year: year,
             cash: categoryKey === 'cash' ? formatBalances(cash, newAccount.balance) : cash,
-            debt: categoryKey === 'debt' ? formatBalances(debt, newAccount.balance) : debt,
+            debt: categoryKey === 'debt' ? formatBalances(debt, newAccount.balance * -1) : debt,
             investment: categoryKey === 'investment' ? 
               formatBalances(investment, newAccount.balance) : investment
           },
@@ -292,15 +175,9 @@ const AccountsModal = ({
     <Modal open={true} onClose={handleClose}>
       <Box sx={{ ...modalStyle, width: 300, borderRadius: '10px' }}>
         <Stack direction={'column'} spacing={2}>
-          {addBtnIsSelected ? (
             <Typography sx={{ margin: '0 auto' }} variant="h6">
               Create New Account
             </Typography>
-          ) : (
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
-              Update Account
-            </Typography>
-          )}
           <TextField
             label="Account"
             type="text"
@@ -366,24 +243,24 @@ const AccountsModal = ({
               <FormHelperText>Choose category</FormHelperText>
             )}
           </FormControl>
-          <Stack direction={'row'} sx={{ width: '100%' }} justifyContent={'space-between'}>
+          <Stack 
+            direction={'row'} 
+            sx={{ width: '100%' }} 
+            justifyContent={'space-between'}
+          >
             <Button
               sx={{ width: '45%' }}
               onClick={handleAddButton}
               variant="contained"
-              disabled={
-                validBalance &&
-                accountName &&
-                category &&
-                addBtnIsSelected
-                  ? false
-                  : true
-              }
+              disabled={validBalance && accountName && category ? false : true}
             >
               Add
             </Button>
-           
-            <Button onClick={handleClose} variant="contained" sx={{ width: '45%' }}>
+            <Button 
+              onClick={handleClose} 
+              variant="contained" 
+              sx={{ width: '45%' }}
+            >
               Close
             </Button>
           </Stack>
@@ -393,4 +270,4 @@ const AccountsModal = ({
   );
 };
 
-export default AccountsModal;
+export default AddAccountModal;

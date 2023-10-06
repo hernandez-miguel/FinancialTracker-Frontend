@@ -9,7 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
-import AccountsModal from './AccountsModal';
+import AddAccountModal from './AddAccountModal';
+import UpdateAccountModal from './UpdateAccountModal';
 import AccountsDeleteDialog from './AccountsDeleteDialog';
 import TextField from '@mui/material/TextField';
 import { useDebounceValue } from '../helpers/networthPage.helper';
@@ -22,21 +23,21 @@ const AccountsTableToolbar = (props) => {
   const { setPage } = useData();
   const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
-  const [addBtnIsSelected, setAddBtnIsSelected] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddAcctModal, setShowAddAcctModal] = useState(false);
+  const [showUpdateAcctModal, setShowUpdateAcctModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const searchAccount = useDebounceValue(debounceValue, 350); 
   
   useEffect(() => {
     if(filteredData.length > 0) {
-      const foundMerchantArr = filteredData.filter((expense) => {
-        if (expense.merchant.toUpperCase().includes(searchAccount.toUpperCase())) {
+      const foundAccountArr = filteredData.filter((account) => {
+        if (account.account.toUpperCase().includes(searchAccount.toUpperCase())) {
           return true;
         }
       });
 
-      setAccountsTableView([...foundMerchantArr]);
+      setAccountsTableView([...foundAccountArr]);
       setPage(0);
     } else {
       const foundAccountArr = accountsData.filter((account) => {
@@ -51,12 +52,11 @@ const AccountsTableToolbar = (props) => {
   }, [searchAccount])
 
   const handleEditBtn = () => {
-    setShowModal(true);
+    setShowUpdateAcctModal(true);
   }
 
   const handleAddBtn = () => {
-    setAddBtnIsSelected(true);
-    setShowModal(true);
+    setShowAddAcctModal(true);
   }
 
   const handleDeleteBtn = () => {
@@ -146,11 +146,13 @@ const AccountsTableToolbar = (props) => {
         />
       }
 
-      {showModal && 
-        <AccountsModal
-          addBtnIsSelected={addBtnIsSelected}
-          setAddBtnIsSelected={setAddBtnIsSelected}
-          setShowModal={setShowModal}
+      {showAddAcctModal && 
+        <AddAccountModal setShowModal={setShowAddAcctModal}/>
+      }
+
+      {showUpdateAcctModal && 
+        <UpdateAccountModal 
+          setShowModal={setShowUpdateAcctModal} 
           selectedArr={selectedArr}
         />
       }

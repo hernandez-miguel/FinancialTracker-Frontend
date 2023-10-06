@@ -157,7 +157,7 @@ export default function AccountsTable() {
                     </TableCell>
                     <TableCell align="left">{capitalizeFirstLetter(row.category)}</TableCell>
                     <TableCell align="left">
-                      {row.prevBalance ? `$ ${formatAmount(row.prevBalance)}` : '-'}
+                      {row.prevBalance >= 0 ? `$ ${formatAmount(row.prevBalance)}` : '-'}
                     </TableCell>
                     <TableCell
                       align="left"

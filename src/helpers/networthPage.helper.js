@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
 
+export const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
+
 export function useDebounceValue(value, time) {
   const [debounceValue, setDebounceValue] = useState(value);
 
@@ -45,10 +58,6 @@ export function stableSort(array, comparator) {
 }
 
 export function formatAmount(amount) {
-  if (amount < 0) {
-    amount *= -1;
-  }
-  
   // Convert the number to a string
   amount = amount.toFixed(2);
   
@@ -93,10 +102,6 @@ export function formatChanges(chg) {
 export function getNetChg(prevAmount, updatedAmount) {
   if (prevAmount === updatedAmount) {
     return '';
-  }
-
-  if(updatedAmount < 0) {
-    updatedAmount *= -1;
   }
 
   const netChange = (updatedAmount * 100 - prevAmount * 100) / 100;
