@@ -6,6 +6,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
+import { removeItemsByIndices } from '../helpers/expensesPage.helper';
 
 const EXPENSES_URL = '/api/expenses';
 const REFRESHTOKEN_URL = '/refresh';
@@ -19,23 +20,7 @@ const ExpensesDeleteDialog = ({ showDeleteDialog, setShowDeleteDialog, selectedA
     const foundIndex = expensesData.findIndex((item) => {
       return item._id === selectedArr[i];
     })
-
     removeList.push(foundIndex);
-  }
-
-  const removeItemsByIndices = (arr, indices) => {
-    // Sort indices in descending order to avoid index shifting issues
-    indices.sort((a, b) => b - a);
-
-    // Remove elements from the array based on the sorted indices
-    for (let i = 0; i < indices.length; i++) {
-      const index = indices[i];
-      if (index >= 0 && index < arr.length) {
-        arr.splice(index, 1);
-      }
-    }
-
-    return arr;
   }
   
   const handleCancel = () => {

@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { getBarChartLabels, getBarChartData } from '../helpers/networthPage.helper';
+import { getBarChartLabels } from '../helpers/networthPage.helper';
 import { formatAmount, sortByYear } from '../helpers/networthPage.helper';
 import useData from '../hooks/useData.hook';
 
@@ -19,7 +19,6 @@ const NetWorthChart = () => {
   const { setAccountsTableView } = useData();
   
   const mobileView = useMediaQuery('(max-width:600px)');
-  
   const labelsList = getBarChartLabels(balancesData);
   
   const [barData, setBarData] = useState({

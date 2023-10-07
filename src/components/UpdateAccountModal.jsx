@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 import useData from '../hooks/useData.hook';
 import axios from '../api/axios';
 import { getNetChg, getPercentChg, modalStyle } from '../helpers/networthPage.helper';
-import { capitalizeFirstLetter, formatBalances } from '../helpers/networthPage.helper';
+import { capitalizeFirstLetter, updateBalance } from '../helpers/networthPage.helper';
 
 const ACCOUNTS_URL = '/api/accounts';
 const BALANCES_URL = '/api/balances';
@@ -119,9 +119,12 @@ const UpdateAccountModal = ({ setShowModal, selectedArr }) => {
         BALANCES_URL + `/${balanceId}`,
         {
           year: year,
-          cash: categoryKey === 'cash' ? formatBalances(cash, netChg) : cash,
-          debt: categoryKey === 'debt' ? formatBalances(debt, netChg) : debt,
-          investment: categoryKey === 'investment' ? formatBalances(investment, netChg) : investment
+          cash: categoryKey === 'cash' ? 
+            updateBalance(cash, netChg, 'update') : cash,
+          debt: categoryKey === 'debt' ? 
+            updateBalance(debt, netChg, 'update') : debt,
+          investment: categoryKey === 'investment' ? 
+            updateBalance(investment, netChg, 'update') : investment
         },
         {
           headers: { Authorization: `Bearer ${newAccessToken}` },

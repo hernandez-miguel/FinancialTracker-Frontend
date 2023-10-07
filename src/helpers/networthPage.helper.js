@@ -75,9 +75,14 @@ export function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function formatBalances(firstNum, secondNum) {
-  const total = (firstNum * 100 + secondNum * 100) / 100;
-  return Math.round(100 * total) / 100;
+export function updateBalance(firstNum, secondNum, type) {
+  if (type === 'update') {
+    const total = (firstNum * 100 + secondNum * 100) / 100;
+    return Math.round(100 * total) / 100;
+  } else if (type === 'delete') {
+    const total = (firstNum * 100 - secondNum * 100) / 100;
+    return Math.round(100  * total) / 100;
+  }
 }
 
 export function formatChanges(chg) {
@@ -124,7 +129,48 @@ export function sortByYear(arr) {
   return arr.sort((a, b) => a.year - b.year);
 }
 
+export function getDeletedData(arr) {
+  const result = [];
+
+  arr.forEach((item) => {
+    const year = parseInt(item.updatedAt.slice(0, 4));
+
+    if (!result.find((entry) => entry.year === year)) {
+      result.push({ year, cash: 0, debt: 0, investment: 0 });
+    }
+
+    if (item.category === 'cash') {
+      result.find((entry) => entry.year === year).cash += item.balance;
+    } else if (item.category === 'investment') {
+      result.find((entry) => entry.year === year).investment += item.balance;
+    } else if (item.category === 'debt') {
+      result.find((entry) => entry.year === year).debt += item.balance * -1;
+    }
+  });
+
+  return result.sort((a, b) => a.year - b.year);
+}
+
+export function removeItemsByIndices(arr, indices) {
+  // Sort indices in descending order to avoid index shifting issues
+  indices.sort((a, b) => b - a);
+
+  // Remove elements from the array based on the sorted indices
+  for (let i = 0; i < indices.length; i++) {
+    const index = indices[i];
+    if (index >= 0 && index < arr.length) {
+      arr.splice(index, 1);
+    }
+  }
+
+  return arr;
+}
+
 export function getBarChartLabels(arr) {
+  if (arr.length < 1) {
+    return [];
+  }
+
   const earliestYear = Math.min(...arr.map((item) => item.year));
   const latestYear = Math.max(...arr.map((item) => item.year));
   const result = [];

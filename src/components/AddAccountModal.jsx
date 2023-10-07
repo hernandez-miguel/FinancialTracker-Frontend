@@ -15,7 +15,7 @@ import useData from '../hooks/useData.hook';
 import useAuth from '../hooks/useAuth.hook';
 import axios from '../api/axios';
 import { modalStyle } from '../helpers/networthPage.helper';
-import { formatBalances } from '../helpers/networthPage.helper';
+import { updateBalance } from '../helpers/networthPage.helper';
 
 const ACCOUNTS_URL = '/api/accounts';
 const BALANCES_URL = '/api/balances';
@@ -139,10 +139,12 @@ const AddAccountModal = ({ setShowModal }) => {
           BALANCES_URL + `/${balanceId}`,
           {
             year: year,
-            cash: categoryKey === 'cash' ? formatBalances(cash, newAccount.balance) : cash,
-            debt: categoryKey === 'debt' ? formatBalances(debt, newAccount.balance * -1) : debt,
+            cash: categoryKey === 'cash' ? 
+              updateBalance(cash, newAccount.balance, 'update') : cash,
+            debt: categoryKey === 'debt' ? 
+              updateBalance(debt, newAccount.balance * -1, 'update') : debt,
             investment: categoryKey === 'investment' ? 
-              formatBalances(investment, newAccount.balance) : investment
+              updateBalance(investment, newAccount.balance, 'update') : investment
           },
           {
             headers: { Authorization: `Bearer ${newAccessToken}` },

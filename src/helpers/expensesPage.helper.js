@@ -122,6 +122,21 @@ export function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+export function removeItemsByIndices(arr, indices) {
+  // Sort indices in descending order to avoid index shifting issues
+  indices.sort((a, b) => b - a);
+
+  // Remove elements from the array based on the sorted indices
+  for (let i = 0; i < indices.length; i++) {
+    const index = indices[i];
+    if (index >= 0 && index < arr.length) {
+      arr.splice(index, 1);
+    }
+  }
+
+  return arr;
+}
+
 export function formatAmount(amount) {
   // Convert the number to a string
   amount = amount.toFixed(2);
