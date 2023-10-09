@@ -167,14 +167,14 @@ function LoginPage() {
               Sign In
             </Button>
           </Grid>
-          <Grid item xs={5} sx={{ textAlign: 'left' }}>
+          {/* <Grid item xs={5} sx={{ textAlign: 'left' }}>
             <NavLink to='' style={{ color: '#1976d2' }}>
               <Typography variant='caption'>
                 Forgot password?
               </Typography>
             </NavLink>
-          </Grid>
-          <Grid item xs={7} sx={{ textAlign: 'right' }}>
+          </Grid> */}
+          <Grid item xs={12} sx={{ textAlign: 'right' }}>
             <NavLink to='/register' style={{ color: '#1976d2' }}>
               <Typography variant='caption'>
                 Don't have an account? Sign up

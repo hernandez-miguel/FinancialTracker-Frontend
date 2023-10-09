@@ -186,48 +186,54 @@ export function getBarChartLabels(arr) {
   return (result);
 }
 
-export function getBarChartData(arr) {
-  return Object.values(arr.reduce((acc, curr) => {
-    const { year, category, amount } = curr;
+export function getYearlyNetworth(arr) {
+  const sortedData = sortByYear(arr);
 
-    if (!acc[year]) {
-      acc[year] = { cash: 0, debt: 0, investment: 0 };
-    }
+  const reducedData = sortedData.reduce((acc, curr) => {
+    const { year, cash, debt, investment } = curr;
 
-    acc[year][category] += amount;
+    if(!acc[year]) {
+      acc[year] = 0;
+    } 
+
+    acc[year] += cash;
+    acc[year] += debt;
+    acc[year] += investment;
+
+    acc[year] = (Math.round(acc[year] * 100) / 100);
 
     return acc;
-  }, {}));
+  }, {});
+
+  const reducedDataVlues = Object.values(reducedData);
+
+  return reducedDataVlues;
 }
 
-export function getYearlyTotal(arr) {
-  return arr.reduce((acc, curr) => {
-    const { year, amount } = curr;
+export function getCurrentNetworth(arr) {
+  if(arr.length === 0) {
+    return 0;
+  }
+  const sortedData = sortByYear(arr);
 
-    if (!acc[year]) {
+  const reducedData = sortedData.reduce((acc, curr) => {
+    const { year, cash, debt, investment } = curr;
+
+    if(!acc[year]) {
       acc[year] = 0;
     }
 
-    acc[year] += amount;
+    acc[year] += cash;
+    acc[year] += debt;
+    acc[year] += investment;
+
+    acc[year] = (Math.round(acc[year] * 100) / 100);
 
     return acc;
   }, {});
-}
 
-export function getCategoryTotal(arr) {
-  return arr.reduce((acc, curr) => {
-    const { category, amount } = curr;
+  const reducedDataVlues =  Object.values(reducedData);
+  const lastItem = reducedDataVlues.length - 1;
 
-    if (!acc[category]) {
-      acc[category] = 0;
-    }
-
-    if (acc[category] === 'Debt') {
-      acc[category] += (amount * -1)
-    } else {
-      acc[category] += amount;
-    }
-
-    return acc;
-  }, {});
+  return reducedDataVlues[lastItem];
 }

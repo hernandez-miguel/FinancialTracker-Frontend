@@ -3,19 +3,17 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js/auto';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { getBarChartLabels } from '../helpers/networthPage.helper';
 import { formatAmount, sortByYear } from '../helpers/networthPage.helper';
+import { getYearlyNetworth, getCurrentNetworth } from '../helpers/networthPage.helper';
 import useData from '../hooks/useData.hook';
 
 const NetWorthChart = () => {
-  const [year, setYear] = useState('');
+  const [currentNetworth, setCurrentNetworth] = useState(0);
+
   const { accountsData, balancesData } = useData();
-  const { setFilteredData } = useData();
   const { setAccountsTableView } = useData();
   
   const mobileView = useMediaQuery('(max-width:600px)');
@@ -28,17 +26,28 @@ const NetWorthChart = () => {
         label: 'debt',
         data: sortByYear(balancesData).map((item) => item.debt),
         backgroundColor: '#2d6a4f',
+        order: 1
       },
       {
-        label: 'investment',
+        label: 'Investment',
         data: sortByYear(balancesData).map((item) => item.investment),
         backgroundColor: '#52b788',
+        order: 1
       },
       {
-        label: 'cash',
+        label: 'Cash',
         data: sortByYear(balancesData).map((item) => item.cash),
         backgroundColor: '#b7e4c7',
+        order: 1
       },
+      {
+        label: 'Networth',
+        data: getYearlyNetworth(balancesData).map((item) => item),
+        borderColor: 'yellow',
+        backgroundColor: 'yellow',
+        type: 'line',
+        order: 0
+      }
     ],
   });
 
@@ -48,7 +57,7 @@ const NetWorthChart = () => {
     plugins: {
       title: {
         display: true,
-        text: 'Yearly net worth',
+        text: 'Yearly Networth',
         align: 'center',
       },
     },
@@ -84,54 +93,53 @@ const NetWorthChart = () => {
 
   useEffect(() => {
     setAccountsTableView([...accountsData]);
-    setFilteredData([]);
+    setCurrentNetworth(getCurrentNetworth(balancesData));
     setBarData({
       labels: labelsList,
       datasets: [
         {
-          label: 'debt',
+          label: 'Debt',
           data: sortByYear(balancesData).map((item) => item.debt),
           backgroundColor: '#2d6a4f',
+          order: 1
         },
         {
-          label: 'investment',
+          label: 'Investment',
           data: sortByYear(balancesData).map((item) => item.investment),
           backgroundColor: '#52b788',
+          order: 1
         },
         {
-          label: 'cash',
+          label: 'Cash',
           data: sortByYear(balancesData).map((item) => item.cash),
           backgroundColor: '#b7e4c7',
+          order: 1
         },
+        {
+          label: 'Networth',
+          data: getYearlyNetworth(balancesData).map((item) => item),
+          borderColor: '#ffd60a',
+          backgroundColor: '#ffd60a',
+          type: 'line',
+          order: 0
+        }
       ],
     });
   }, [accountsData, balancesData]);
 
   return (
     <Box sx={{ width: '100%', paddingTop: 2 }}>
-      <Paper sx={{ width: '100%', mb: 2, p: 1.5 }}>
-        <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="year-selector-label">Year</InputLabel>
-          <Select
-            labelId="year-selector-label"
-            id="year-selector"
-            value={year}
-            onChange={(ev) => setYear(ev.target.value)}
-            label="year"
-          >
-            <MenuItem value="">
-              <em>Show all</em>
-            </MenuItem>
-            {sortByYear(balancesData).map((item) => {
-              return (
-                <MenuItem key={item.year} value={item.year}>
-                  {item.year}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-        <Bar data={barData} options={barChartOptions}/>
+      <Paper sx={{ width: '100%', mb: 2, p: 1.5, textAlign: 'center' }}>
+        { accountsData.length > 0 ? (
+          <>
+            <Bar data={barData} options={barChartOptions}/>
+            <Typography marginTop={'25px'} variant="subtitle2">
+                {`Networth: $ ${formatAmount(currentNetworth)}`}
+            </Typography>
+          </> 
+        ) : (
+          <h4>No data available</h4>
+        )}
       </Paper>
     </Box>
   );

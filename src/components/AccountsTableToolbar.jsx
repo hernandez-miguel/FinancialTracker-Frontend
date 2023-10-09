@@ -21,7 +21,6 @@ const AccountsTableToolbar = (props) => {
   const { numSelected, selectedArr } = props;
   const { accountsData, setAccountsTableView } = useData();
   const { setPage } = useData();
-  const { filteredData } = useData();
   const [debounceValue, setDebounceValue] = useState('')
   const [showAddAcctModal, setShowAddAcctModal] = useState(false);
   const [showUpdateAcctModal, setShowUpdateAcctModal] = useState(false);
@@ -30,25 +29,14 @@ const AccountsTableToolbar = (props) => {
   const searchAccount = useDebounceValue(debounceValue, 350); 
   
   useEffect(() => {
-    if(filteredData.length > 0) {
-      const foundAccountArr = filteredData.filter((account) => {
-        if (account.account.toUpperCase().includes(searchAccount.toUpperCase())) {
-          return true;
-        }
-      });
+    const foundAccountArr = accountsData.filter((account) => {
+      if (account.account.toUpperCase().includes(searchAccount.toUpperCase())) {
+        return true;
+      }
+    });
 
-      setAccountsTableView([...foundAccountArr]);
-      setPage(0);
-    } else {
-      const foundAccountArr = accountsData.filter((account) => {
-        if (account.account.toUpperCase().includes(searchAccount.toUpperCase())) {
-          return true;
-        }
-      });
-
-      setAccountsTableView([...foundAccountArr]);
-      setPage(0);
-    }
+    setAccountsTableView([...foundAccountArr]);
+    setPage(0);
   }, [searchAccount])
 
   const handleEditBtn = () => {

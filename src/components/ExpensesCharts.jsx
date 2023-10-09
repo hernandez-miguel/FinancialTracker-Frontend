@@ -76,7 +76,7 @@ const ExpensesCharts = () => {
 
   const barChartOptions = {
     responsive: true,
-    aspectRatio: mobileView ? 1.25 : 3.25,
+    aspectRatio: mobileView ? 1 : 2.50,
     plugins: {
       title: {
         display: true,
@@ -256,57 +256,57 @@ const ExpensesCharts = () => {
   return (
     <Box sx={{ width: '100%', paddingTop: 2 }}>
       <Paper sx={{ width: '100%', mb: 2, p: 1.5 }}>
-        <Stack direction={'row'} justifyContent={ mobileView ? 'center' : 'start'}>
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="year-selector-label">Year</InputLabel>
-            <Select
-              labelId="year-selector-label"
-              id="year-selector"
-              value={year}
-              onChange={(ev) => setYear(ev.target.value)}
-              label="year"
-            >
-              <MenuItem value="">
-                <em>Show all</em>
-              </MenuItem>
-              {yearList.map((year) => {
-                return (
-                  <MenuItem key={year} value={year}>
-                    {year}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel id="month-selector-label">Month</InputLabel>
-            <Select
-              labelId="month-selector-label"
-              id="month-selector"
-              value={month}
-              onChange={(ev) => setMonth(ev.target.value)}
-              label="Month"
-            >
-              <MenuItem value="">
-                <em>Show all</em>
-              </MenuItem>
-              {monthList.map((item) => {
-                return (
-                  <MenuItem key={item.key} value={item.key}>
-                    {item.month}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </Stack>
         <Stack direction={'column'} spacing={2} textAlign={'center'}>
           {expensesTableView.length > 0 ? (
             <>
+              <Stack direction={'row'} justifyContent={ mobileView ? 'center' : 'start'}>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="year-selector-label">Year</InputLabel>
+                  <Select
+                    labelId="year-selector-label"
+                    id="year-selector"
+                    value={year}
+                    onChange={(ev) => setYear(ev.target.value)}
+                    label="year"
+                  >
+                    <MenuItem value="">
+                      <em>Show all</em>
+                    </MenuItem>
+                    {yearList.map((year) => {
+                      return (
+                        <MenuItem key={year} value={year}>
+                          {year}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="month-selector-label">Month</InputLabel>
+                  <Select
+                    labelId="month-selector-label"
+                    id="month-selector"
+                    value={month}
+                    onChange={(ev) => setMonth(ev.target.value)}
+                    label="Month"
+                  >
+                    <MenuItem value="">
+                      <em>Show all</em>
+                    </MenuItem>
+                    {monthList.map((item) => {
+                      return (
+                        <MenuItem key={item.key} value={item.key}>
+                          {item.month}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </Stack>
               <Pie data={pieData} options={pieChartOptions} />
               <Bar data={barData} options={barChartOptions} />
               <Typography marginTop={'25px'} variant="subtitle2">
-                {`Total Expenses: $${formatAmount(expensesTotal)}`}
+                {`Total Expenses: $ ${formatAmount(expensesTotal)}`}
               </Typography>
             </>
           ) : (
