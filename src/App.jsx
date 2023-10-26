@@ -1,5 +1,6 @@
 import { LoginPage, RegisterPage, ExpensesPage } from './pages/index.js';
-import { NetWorthPage, AdminPage } from './pages/index.js';
+import { NetWorthPage, AdminPage, UnauthorizedPage } from './pages/index.js';
+import { MissingPage } from './pages/index.js';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthProvider.jsx';
 import { DataProvider } from './context/DataProvider.jsx';
@@ -18,7 +19,6 @@ function App() {
                 {/*public routes*/}
                 <Route path='/login' element={<LoginPage />} />
                 <Route path='/register' element={<RegisterPage />} />
-                {/* <Route path='/unauthorized' element={<UnauthPage />} /> */}
 
                 {/*protected routes*/}
                 <Route element={<RequireAuth allowedRoles={[2001]}/>}>
@@ -27,9 +27,14 @@ function App() {
                 <Route element={<RequireAuth allowedRoles={[2001]}/>}>
                   <Route path='/networth' element={<NetWorthPage />} />
                 </Route>
+                <Route element={<RequireAuth allowedRoles={[2001]}/>}>
+                  <Route path='/unauthorized' element={<UnauthorizedPage />} />
+                </Route>
                 <Route element={<RequireAuth allowedRoles={[5150]}/>}>
                   <Route path='/admin' element={<AdminPage />} />
                 </Route>/
+
+                <Route path='*' element={<MissingPage />} />
               </Route>
             </Routes>
         </DataProvider>

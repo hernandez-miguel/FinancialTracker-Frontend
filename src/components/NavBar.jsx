@@ -29,7 +29,7 @@ function NavBar() {
   const pages = [
     {
       path: '/',
-      name: 'Dashboard'
+      name: 'Expenses'
     },
     {
       path: '/networth',
