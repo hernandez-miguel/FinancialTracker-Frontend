@@ -134,7 +134,7 @@ const NetWorthChart = () => {
           <>
             <Bar data={barData} options={barChartOptions}/>
             <Typography marginTop={'25px'} variant="subtitle2">
-                {`Networth: $ ${formatAmount(currentNetworth)}`}
+                {`Networth: $${formatAmount(currentNetworth)}`}
             </Typography>
           </> 
         ) : (

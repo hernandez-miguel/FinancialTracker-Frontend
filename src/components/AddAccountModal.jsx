@@ -177,7 +177,7 @@ const AddAccountModal = ({ setShowModal }) => {
     <Modal open={true} onClose={handleClose}>
       <Box sx={{ ...modalStyle, width: 300, borderRadius: '10px' }}>
         <Stack direction={'column'} spacing={2}>
-            <Typography sx={{ margin: '0 auto' }} variant="h6">
+            <Typography variant="h6" textAlign={'center'}>
               Create New Account
             </Typography>
           <TextField

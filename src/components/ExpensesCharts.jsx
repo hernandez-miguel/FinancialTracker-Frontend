@@ -306,7 +306,7 @@ const ExpensesCharts = () => {
               <Pie data={pieData} options={pieChartOptions} />
               <Bar data={barData} options={barChartOptions} />
               <Typography marginTop={'25px'} variant="subtitle2">
-                {`Total Expenses: $ ${formatAmount(expensesTotal)}`}
+                {`Total Expenses: $${formatAmount(expensesTotal)}`}
               </Typography>
             </>
           ) : (
