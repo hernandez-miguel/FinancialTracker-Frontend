@@ -141,7 +141,7 @@ function LoginPage() {
         <LockOutlinedIcon></LockOutlinedIcon>
       </Avatar>
       <Typography variant="h5" component={'h1'}>
-        Sign In
+        Sign in
       </Typography>
       <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
         <Grid container spacing={2}>
